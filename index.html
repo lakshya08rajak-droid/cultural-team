@@ -47,11 +47,43 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <!-- Atmospheric Aurora Background Orbs -->
-  <div class="aurora-bg" aria-hidden="true">
-    <div class="aurora-orb orb-1"></div>
-    <div class="aurora-orb orb-2"></div>
-    <div class="aurora-orb orb-3"></div>
+  <!-- ====================================================================
+       CINEMATIC 3D PARALLAX SCENIC BACKGROUND
+       ==================================================================== -->
+  <div class="scenic-3d-viewport" id="scenic-3d-viewport" aria-hidden="true">
+    <div class="scenic-3d-stage" id="scenic-3d-stage">
+      <!-- Depth Layer 1: Atmospheric Deep Velvet Base & Theatrical Beams -->
+      <div class="scenic-depth-layer layer-base">
+        <div class="scenic-light-beam beam-left"></div>
+        <div class="scenic-light-beam beam-right"></div>
+        <div class="scenic-halo-glow"></div>
+      </div>
+
+      <!-- Depth Layer 2: Ornate Cultural Mandala 3D Visual Plane -->
+      <div class="scenic-depth-layer layer-mandala" id="scenic-mandala-plane">
+        <div class="mandala-frame">
+          <img
+            src="assets/cultural-bg-mandala.jpg"
+            alt=""
+            class="mandala-bg-img"
+            id="mandala-bg-img"
+            loading="eager"
+            decoding="async"
+          />
+          <div class="mandala-inner-sheen"></div>
+        </div>
+      </div>
+
+      <!-- Depth Layer 3: Floating Aurora Orbs & Ambient Glows -->
+      <div class="scenic-depth-layer layer-ambient" id="scenic-ambient-plane">
+        <div class="aurora-orb orb-1"></div>
+        <div class="aurora-orb orb-2"></div>
+        <div class="aurora-orb orb-3"></div>
+      </div>
+
+      <!-- Depth Layer 4: Cinematic Contrast Vignette & Readability Shield -->
+      <div class="scenic-vignette-overlay"></div>
+    </div>
   </div>
 
   <!-- Interactive Spark Canvas -->
