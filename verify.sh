@@ -17,6 +17,7 @@ for f in \
   assets/cultural-club-logo.jpg \
   supabase/schema.sql \
   vercel.json \
+  package.json \
   README.md; do
   if [ ! -s "$f" ]; then
     echo "ERROR: Missing or empty file: $f"

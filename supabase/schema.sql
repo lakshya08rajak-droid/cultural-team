@@ -119,7 +119,7 @@ GRANT SELECT, INSERT, DELETE ON TABLE public.suggestion_votes TO service_role;
 -- ==============================================================================
 -- 7. CONTROLLED SECURE RPC FUNCTION FOR ATOMIC UPVOTING
 -- ==============================================================================
--- Allows visitors to toggle their device's upvote without granting direct UPDATE permissions
+-- Allows visitors to toggle device upvotes without granting direct UPDATE permissions
 DROP FUNCTION IF EXISTS public.toggle_upvote(BIGINT, INT);
 DROP FUNCTION IF EXISTS public.toggle_upvote(BIGINT, TEXT);
 

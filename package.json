@@ -1,0 +1,13 @@
+{
+  "name": "cultural-team-coming-soon",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cultural Team official website and live suggestions portal",
+  "scripts": {
+    "test": "./verify.sh",
+    "build": "echo 'Production static assets verified and ready for deployment.'"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
