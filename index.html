@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>CULTURAL TEAM — Something Amazing Is Coming Soon | College Arts &amp; Cultural Committee</title>
+  <meta
+    name="description"
+    content="The official Cultural Team portal. Something amazing is coming soon! Suggest upcoming college events, upvote the best ideas, and shape our next unforgettable festival memory."
+  />
+  <meta name="theme-color" content="#05070d" />
+
+  <!-- Open Graph / Social Sharing Metadata -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="CULTURAL TEAM — Something Amazing Is Coming Soon!" />
+  <meta
+    property="og:description"
+    content="What should we host next? Share your event ideas, upvote campus favorites, and influence the next grand college cultural festival."
+  />
+  <meta property="og:image" content="assets/cultural-club-logo.jpg" />
+
+  <!-- Twitter Card Metadata -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="CULTURAL TEAM — Something Amazing Is Coming Soon!" />
+  <meta
+    name="twitter:description"
+    content="What should we host next? Suggest college events and vote on the public wall."
+  />
+  <meta name="twitter:image" content="assets/cultural-club-logo.jpg" />
+
+  <!-- Monumental Roman Typography (Cinzel + Playfair Display + Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Main Editorial Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Supabase Official Client Library for Real-Time Database -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <!-- Atmospheric Aurora Background Orbs -->
+  <div class="aurora-bg" aria-hidden="true">
+    <div class="aurora-orb orb-1"></div>
+    <div class="aurora-orb orb-2"></div>
+    <div class="aurora-orb orb-3"></div>
+  </div>
+
+  <!-- Interactive Spark Canvas -->
+  <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+  <!-- ====================================================================
+       1. SITE HEADER & NAVIGATION
+       ==================================================================== -->
+  <header id="site-header" class="site-header">
+    <div class="header-inner">
+      <a href="#hero" class="brand-wrapper" aria-label="Cultural Team Home">
+        <div class="brand-logo-frame">
+          <img
+            src="assets/cultural-club-logo.jpg"
+            alt="Cultural Team Official Crest"
+            class="brand-logo-img"
+            width="46"
+            height="46"
+          />
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-title">CULTURAL TEAM</span>
+          <span class="brand-subtext">Arts &amp; Cultural Committee</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="header-nav" aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="#mystery" class="nav-link">Mystery Teaser</a></li>
+          <li><a href="#suggestions-section" class="nav-link">Suggest Event</a></li>
+          <li><a href="#inspiration-section" class="nav-link">30 Ideas</a></li>
+          <li><a href="#community-wall" class="nav-link">Community Wall</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Live Database Status Badge -->
+        <button
+          type="button"
+          id="db-status-badge"
+          class="db-status-badge"
+          aria-label="Database Connection Status"
+          title="Click to view database connection status"
+        >
+          <span id="db-status-dot" class="db-status-dot"></span>
+          <span id="db-status-text">Cloud Database</span>
+        </button>
+
+        <!-- QR Code Quick Trigger -->
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          data-open-qr
+          aria-label="Display QR Code for Mobile Scanning"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span>QR Code</span>
+        </button>
+
+        <!-- CTA Button -->
+        <a href="#suggestions-section" class="btn btn-primary btn-sm">
+          <span>Share Ideas</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ====================================================================
+       MAIN PAGE CONTENT
+       ==================================================================== -->
+  <main class="app-container">
+
+    <!-- ==================================================================
+         2. HERO SECTION — FIRST IMPRESSION
+         ================================================================== -->
+    <section id="hero" class="hero-section" aria-labelledby="hero-main-title">
+      <!-- Eyebrow Pill -->
+      <div class="hero-badge-pill">
+        <span class="hero-badge-dot" aria-hidden="true"></span>
+        <span>Official Cultural Festival Portal · 2026 Edition</span>
+      </div>
+
+      <!-- Sacred Cultural Team Logo Showcase -->
+      <div class="hero-logo-showcase">
+        <div class="hero-logo-frame">
+          <img
+            src="assets/cultural-club-logo.jpg"
+            alt="The Cultural Club Official Emblem"
+            class="hero-logo-img"
+            width="140"
+            height="140"
+          />
+        </div>
+      </div>
+
+      <!-- Bold Roman Important Headings -->
+      <h1 id="hero-main-title" class="hero-title-team">
+        CULTURAL TEAM
+      </h1>
+
+      <h2 class="hero-headline-amazing">
+        SOMETHING AMAZING IS COMING SOON!!!!
+      </h2>
+
+      <h3 class="hero-subheadline-guess">
+        DO YOU WANNA GUESS WHAT?
+      </h3>
+
+      <p class="hero-description">
+        The stage is being set, the lights are warming up, and college history is about to be rewritten. A monumental cultural experience is quietly brewing behind closed doors — and you have the power to shape what happens next.
+      </p>
+
+      <!-- Hero Call-To-Action Group -->
+      <div class="hero-cta-group">
+        <a href="#suggestions-section" class="btn hero-cta-primary">
+          <span>SHARE YOUR IDEAS</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <polyline points="19 12 12 19 5 12"></polyline>
+          </svg>
+        </a>
+
+        <a href="#inspiration-section" class="btn btn-secondary">
+          <span>Explore 30 Inspiration Ideas</span>
+        </a>
+
+        <button type="button" class="btn btn-secondary" data-open-qr>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span>Scan on Mobile</span>
+        </button>
+      </div>
+
+      <!-- ================================================================
+           3. MYSTERY VISUAL ELEMENT — THE VAULT OF CURIOSITY
+           (No fake dates invented; pure excitement, radar sweep & hype mechanics)
+           ================================================================ -->
+      <div id="mystery" class="mystery-card" aria-label="Classified Event Enigma">
+        <div class="mystery-header">
+          <div class="mystery-status-pill">
+            <span class="hero-badge-dot" style="background:#f43f5e;" aria-hidden="true"></span>
+            <span>Classified · Pre-Announcement Phase</span>
+          </div>
+          <span class="mystery-hint-tag">Confidential Intel · Stage 01</span>
+        </div>
+
+        <div class="mystery-radar-grid">
+          <!-- Dynamic Animated Radar Scope -->
+          <div class="radar-scope" aria-hidden="true">
+            <div class="radar-sweep"></div>
+            <div class="radar-rings"></div>
+            <div class="radar-center-icon">🎭</div>
+          </div>
+
+          <!-- Enigma Details -->
+          <div class="mystery-info">
+            <h3>THE VAULT OF CURIOSITY</h3>
+            <p>
+              The Cultural Committee is planning an extraordinary fusion of music, rhythm, theatre, high-voltage competitions, and campus celebration. Every suggestion submitted below directly impacts the festival blueprint!
+            </p>
+
+            <!-- Live Anticipation Progress Bar -->
+            <div class="hype-meter-wrapper">
+              <div class="hype-meter-header">
+                <span>Campus Anticipation Level</span>
+                <span>98.4% Maximum Hype</span>
+              </div>
+              <div class="hype-progress-bar" role="progressbar" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100">
+                <div class="hype-progress-fill"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clue Tags -->
+        <div class="mystery-clues-row">
+          <span class="clue-pill">✨ Star Performances</span>
+          <span class="clue-pill">🎸 Live Bands</span>
+          <span class="clue-pill">💃 High Energy</span>
+          <span class="clue-pill">🎧 Neon Stage Illumination</span>
+          <span class="clue-pill">🏆 Campus Glory</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         4. LIVE PUBLIC SUGGESTION SECTION
+         "WHAT SHOULD WE HOST NEXT?"
+         ================================================================== -->
+    <section id="suggestions-section" class="section-wrapper" aria-labelledby="suggestions-title">
+      <div class="section-header">
+        <div class="section-eyebrow">
+          <span>✨ Voice of the Campus</span>
+        </div>
+        <h2 id="suggestions-title" class="section-title-roman">
+          WHAT SHOULD WE HOST NEXT?
+        </h2>
+        <p class="section-lead-roman">
+          “Your idea could become our next unforgettable college memory. Suggest an event, share your creativity, and let the Cultural Team know what you want!”
+        </p>
+      </div>
+
+      <!-- Suggestion Submission Card -->
+      <div class="suggestion-form-card">
+        <!-- Error Banner -->
+        <div id="form-alert" class="form-alert" role="alert" aria-live="assertive">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span id="form-alert-msg"></span>
+        </div>
+
+        <form id="suggestion-form" novalidate>
+          <!-- Honeypot Bot Trap -->
+          <div class="honey-field">
+            <label for="website-bot-check">Do not fill this</label>
+            <input type="text" id="website-bot-check" name="website_bot_check" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <!-- Suggestion Title -->
+          <div class="form-group">
+            <label for="suggestion-title" class="form-label">
+              <span>Event or Suggestion Title <span class="req">*</span></span>
+              <span id="title-char-count" class="char-count">0 / 100</span>
+            </label>
+            <input
+              type="text"
+              id="suggestion-title"
+              name="title"
+              class="form-input"
+              placeholder="e.g., Neon Garba Night, Battle of the Bands, Comedy Roast..."
+              required
+              maxlength="100"
+              autocomplete="off"
+            />
+          </div>
+
+          <!-- Category Selection -->
+          <div class="form-group">
+            <label class="form-label">
+              <span>Select Category <span class="char-count">(Optional)</span></span>
+            </label>
+            <input type="hidden" id="suggestion-category-hidden" name="category" value="Cultural Events" />
+            <div class="category-pills-grid" role="radiogroup" aria-label="Select event category">
+              <button type="button" class="category-chip active" data-category="Cultural Events">
+                <span>🎭</span> <span>Cultural Events</span>
+              </button>
+              <button type="button" class="category-chip" data-category="Music and Dance">
+                <span>🎵</span> <span>Music and Dance</span>
+              </button>
+              <button type="button" class="category-chip" data-category="Competitions">
+                <span>🏆</span> <span>Competitions</span>
+              </button>
+              <button type="button" class="category-chip" data-category="Parties and Celebrations">
+                <span>🎉</span> <span>Parties and Celebrations</span>
+              </button>
+              <button type="button" class="category-chip" data-category="Workshops">
+                <span>💡</span> <span>Workshops</span>
+              </button>
+              <button type="button" class="category-chip" data-category="Other Ideas">
+                <span>✨</span> <span>Other Ideas</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Short Description -->
+          <div class="form-group">
+            <label for="suggestion-desc" class="form-label">
+              <span>Short Description <span class="char-count">(Optional)</span></span>
+              <span id="desc-char-count" class="char-count">0 / 350</span>
+            </label>
+            <textarea
+              id="suggestion-desc"
+              name="description"
+              class="form-textarea"
+              placeholder="Give us the scoop! What music, theme, artists, or special rules would make this event legendary?"
+              maxlength="350"
+            ></textarea>
+          </div>
+
+          <!-- Form Action Row -->
+          <div class="form-submit-row">
+            <p class="form-disclaimer">
+              🔒 Open to everyone · No account required · Your suggestion is instantly saved and shared with the community.
+            </p>
+            <button type="submit" id="submit-suggestion-btn" class="btn-submit-main">
+              <span>Submit Suggestion</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         5. 30 IDEAS TO INSPIRE YOU (GALLERY)
+         ================================================================== -->
+    <section id="inspiration-section" class="section-wrapper" aria-labelledby="inspiration-title">
+      <div class="section-header">
+        <div class="section-eyebrow">
+          <span>💡 Campus Idea Vault</span>
+        </div>
+        <h2 id="inspiration-title" class="section-title-roman">
+          IDEAS TO INSPIRE YOU
+        </h2>
+        <p class="section-lead-roman">
+          Explore 30 curated cultural concepts to spark your creativity. Tap any card to automatically suggest it and add your personal spin!
+        </p>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="inspiration-filter-bar" role="tablist" aria-label="Filter inspiration ideas by category">
+        <button type="button" class="filter-btn active" data-filter="ALL">All 30 Ideas</button>
+        <button type="button" class="filter-btn" data-filter="Cultural Events">Cultural Events</button>
+        <button type="button" class="filter-btn" data-filter="Music and Dance">Music &amp; Dance</button>
+        <button type="button" class="filter-btn" data-filter="Competitions">Competitions</button>
+        <button type="button" class="filter-btn" data-filter="Parties and Celebrations">Parties</button>
+      </div>
+
+      <!-- Grid of 30 Ideas -->
+      <div id="inspiration-grid" class="inspiration-grid">
+        <!-- Rendered via js/suggestions-data.js & js/app.js -->
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         6. PUBLIC SUGGESTION WALL
+         "THE PEOPLE HAVE SPOKEN"
+         ================================================================== -->
+    <section id="community-wall" class="section-wrapper" aria-labelledby="wall-title">
+      <div class="section-header">
+        <div class="section-eyebrow">
+          <span>🔥 Real-Time Public Wall</span>
+        </div>
+        <h2 id="wall-title" class="section-title-roman">
+          THE PEOPLE HAVE SPOKEN
+        </h2>
+        <p class="section-lead-roman">
+          Real suggestions submitted by students and visitors. Cast your upvote to let the Cultural Team know what events need to happen!
+        </p>
+      </div>
+
+      <!-- Wall Header Box with Real Database Counter -->
+      <div class="wall-header-box">
+        <div class="wall-counter-block">
+          <span class="wall-counter-label">COMMUNITY IDEAS:</span>
+          <span id="community-counter-number" class="wall-counter-number">0</span>
+        </div>
+
+        <!-- Sorting & Filtering Controls -->
+        <div class="wall-controls">
+          <select id="wall-sort-select" class="sort-select" aria-label="Sort community suggestions">
+            <option value="popular">🔥 Most Popular (Highest Votes)</option>
+            <option value="newest">✨ Newest First</option>
+            <option value="oldest">⏳ Oldest First</option>
+          </select>
+
+          <select id="wall-category-select" class="sort-select" aria-label="Filter community suggestions by category">
+            <option value="ALL">All Categories</option>
+            <option value="Cultural Events">Cultural Events</option>
+            <option value="Music and Dance">Music and Dance</option>
+            <option value="Competitions">Competitions</option>
+            <option value="Parties and Celebrations">Parties and Celebrations</option>
+            <option value="Workshops">Workshops</option>
+            <option value="Other Ideas">Other Ideas</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Public Suggestion Cards Grid -->
+      <div id="community-wall-grid" class="community-grid" aria-live="polite">
+        <!-- Live cards populated from real database -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ====================================================================
+       7. SUBMISSION SUCCESS POPUP MODAL
+       ==================================================================== -->
+  <div id="success-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="success-modal-title">
+    <div class="modal-container">
+      <button type="button" id="success-modal-close" class="modal-close-btn" aria-label="Close modal">×</button>
+
+      <!-- Animated Checkmark Badge -->
+      <div class="success-checkmark-badge" aria-hidden="true">
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+
+      <h3 id="success-modal-title" class="success-title-roman">
+        IDEA SUBMITTED SUCCESSFULLY!
+      </h3>
+
+      <p class="success-body-roman">
+        “Thank you for sharing your creativity with us! Your idea is now part of our Cultural Team community.”
+      </p>
+
+      <!-- Submitted Idea Preview -->
+      <div class="submitted-preview-card">
+        <div id="success-preview-title" class="submitted-preview-title">Event Title</div>
+        <div id="success-preview-category" class="submitted-preview-category">Category</div>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+        <button type="button" id="success-explore-btn" class="btn btn-primary">
+          <span>Explore Other Ideas</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       8. QR CODE PUBLIC ACCESS MODAL
+       ==================================================================== -->
+  <div id="qr-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title">
+    <div class="modal-container">
+      <button type="button" id="qr-modal-close" class="modal-close-btn" aria-label="Close modal">×</button>
+
+      <h3 id="qr-modal-title" class="success-title-roman">
+        SCAN &amp; SHARE ON MOBILE
+      </h3>
+
+      <p class="qr-instructions">
+        Scan this QR code with any smartphone camera to open the Cultural Team suggestion portal instantly — no app or login required.
+      </p>
+
+      <div class="qr-display-box">
+        <div id="qr-code-canvas-container">
+          <!-- Dynamic High-Res SVG QR Code will be rendered here -->
+        </div>
+      </div>
+
+      <div id="qr-url-display" class="qr-url-pill">
+        https://cultural-team.vercel.app
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+        <button type="button" id="copy-link-btn" class="btn btn-secondary btn-sm">
+          Copy Public Link
+        </button>
+        <button type="button" onclick="window.print()" class="btn btn-primary btn-sm">
+          Print Flyer Poster
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       9. DATABASE CONNECTION GUIDE MODAL
+       ==================================================================== -->
+  <div id="db-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="db-modal-title">
+    <div class="modal-container" style="max-width: 620px; text-align: left;">
+      <button type="button" id="db-modal-close" class="modal-close-btn" aria-label="Close modal">×</button>
+
+      <h3 id="db-modal-title" class="success-title-roman" style="text-align: center; margin-bottom: 0.5rem;">
+        SUPABASE DATABASE SETUP GUIDE
+      </h3>
+      <p style="font-size: 0.88rem; color: var(--text-secondary); text-align: center; margin-bottom: 1.5rem;">
+        Connect your persistent cloud database in 2 minutes:
+      </p>
+
+      <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.9rem;">
+        <div>
+          <strong style="color: var(--gold-light);">Step 1:</strong> Create a free project at <a href="https://supabase.com" target="_blank" style="color:#38bdf8;">supabase.com</a>.
+        </div>
+        <div>
+          <strong style="color: var(--gold-light);">Step 2:</strong> Open the <strong>SQL Editor</strong> in your Supabase dashboard and run the script located at <code style="color: #ec4899; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px;">supabase/schema.sql</code>. This creates the tables, indexes, row-level security (RLS), and upvoting stored procedure.
+        </div>
+        <div>
+          <strong style="color: var(--gold-light);">Step 3:</strong> In Supabase <strong>Project Settings &gt; API</strong>, copy your:
+          <ul style="margin: 0.4rem 0 0.4rem 1.5rem;">
+            <li><strong>Project URL</strong></li>
+            <li><strong>anon public API key</strong></li>
+          </ul>
+        </div>
+        <div>
+          <strong style="color: var(--gold-light);">Step 4:</strong> Paste them into <code style="color: #ec4899; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px;">js/config.js</code> or set environment variables in your Vercel project deployment:
+          <ul style="margin: 0.4rem 0 0.4rem 1.5rem; font-family: monospace; font-size: 0.78rem;">
+            <li>VITE_SUPABASE_URL or window.__SUPABASE_ENV__.url</li>
+            <li>VITE_SUPABASE_ANON_KEY or window.__SUPABASE_ENV__.anonKey</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.5rem; text-align: center;">
+        <button type="button" onclick="document.getElementById('db-modal').classList.remove('is-active')" class="btn btn-secondary btn-sm">
+          Got It!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       10. SITE FOOTER WITH CULTURAL TEAM BRANDING
+       ==================================================================== -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top-grid">
+        <div>
+          <div class="brand-wrapper" style="margin-bottom: 1rem;">
+            <div class="brand-logo-frame" style="width: 38px; height: 38px;">
+              <img src="assets/cultural-club-logo.jpg" alt="Logo" class="brand-logo-img" />
+            </div>
+            <div class="brand-text-block">
+              <span class="brand-title" style="font-size: 1.05rem;">CULTURAL TEAM</span>
+              <span class="brand-subtext">Arts &amp; Cultural Committee</span>
+            </div>
+          </div>
+          <p class="footer-brand-bio">
+            Celebrating youth, creativity, art, dance, drama, and campus spirit. Dedicated to producing memorable cultural festivals that empower every student voice.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Quick Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="#hero">Hero &amp; Mystery Teaser</a></li>
+            <li><a href="#suggestions-section">Submit Event Suggestion</a></li>
+            <li><a href="#inspiration-section">30 Event Inspirations</a></li>
+            <li><a href="#community-wall">The People Have Spoken</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Public Sharing</h4>
+          <ul class="footer-links">
+            <li><a href="javascript:void(0)" data-open-qr>Display QR Code</a></li>
+            <li><a href="javascript:void(0)" onclick="window.print()">Print Event Flyer</a></li>
+            <li><a href="https://vercel.com" target="_blank" rel="noopener noreferrer">Hosted on Vercel</a></li>
+            <li><a href="https://supabase.com" target="_blank" rel="noopener noreferrer">Powered by Supabase</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <span>© 2026 Cultural Team. All Rights Reserved. Built with Bold Roman Typography &amp; Real Cloud Persistence.</span>
+        <span>College Arts &amp; Cultural Council</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/suggestions-data.js"></script>
+  <script src="js/qrcode.min.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
