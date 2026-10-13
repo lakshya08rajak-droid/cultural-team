@@ -197,6 +197,9 @@
         </div>
       </div>
     </nav>
+
+    <!-- Mobile Navigation Drawer Dimmer Backdrop -->
+    <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true"></div>
   </header>
 
   <!-- ====================================================================
@@ -435,22 +438,22 @@
             </label>
             <input type="hidden" id="suggestion-category-hidden" name="category" value="Cultural Events" />
             <div class="category-pills-grid" role="radiogroup" aria-label="Select event category">
-              <button type="button" class="category-chip active" data-category="Cultural Events">
+              <button type="button" class="category-chip active" data-category="Cultural Events" role="radio" aria-checked="true">
                 <span>🎭</span> <span>Cultural Events</span>
               </button>
-              <button type="button" class="category-chip" data-category="Music and Dance">
+              <button type="button" class="category-chip" data-category="Music and Dance" role="radio" aria-checked="false">
                 <span>🎵</span> <span>Music and Dance</span>
               </button>
-              <button type="button" class="category-chip" data-category="Competitions">
+              <button type="button" class="category-chip" data-category="Competitions" role="radio" aria-checked="false">
                 <span>🏆</span> <span>Competitions</span>
               </button>
-              <button type="button" class="category-chip" data-category="Parties and Celebrations">
+              <button type="button" class="category-chip" data-category="Parties and Celebrations" role="radio" aria-checked="false">
                 <span>🎉</span> <span>Parties and Celebrations</span>
               </button>
-              <button type="button" class="category-chip" data-category="Workshops">
+              <button type="button" class="category-chip" data-category="Workshops" role="radio" aria-checked="false">
                 <span>💡</span> <span>Workshops</span>
               </button>
-              <button type="button" class="category-chip" data-category="Other Ideas">
+              <button type="button" class="category-chip" data-category="Other Ideas" role="radio" aria-checked="false">
                 <span>✨</span> <span>Other Ideas</span>
               </button>
             </div>
@@ -754,10 +757,13 @@
       </div>
 
       <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+        <button type="button" id="share-native-btn" class="btn btn-primary btn-sm">
+          <span aria-hidden="true">📤</span> Share Link
+        </button>
         <button type="button" id="copy-link-btn" class="btn btn-secondary btn-sm">
           Copy Public Link
         </button>
-        <button type="button" onclick="window.print()" class="btn btn-primary btn-sm">
+        <button type="button" onclick="window.print()" class="btn btn-secondary btn-sm">
           Print Flyer Poster
         </button>
       </div>
@@ -820,6 +826,19 @@
       </div>
     </div>
   </footer>
+
+  <!-- ====================================================================
+       FLOATING QUICK-ACTION ACCESSIBILITY PILL (Mobile & One-Handed)
+       ==================================================================== -->
+  <aside id="mobile-floating-actions" class="mobile-floating-actions" aria-label="Quick mobile actions">
+    <a href="#suggestions-section" id="floating-suggest-btn" class="floating-action-btn" aria-label="Jump directly to idea submission form">
+      <span aria-hidden="true">💡</span>
+      <span>Suggest Idea</span>
+    </a>
+    <button type="button" id="floating-top-btn" class="floating-action-btn icon-only" aria-label="Scroll back to top of page">
+      <span aria-hidden="true">↑</span>
+    </button>
+  </aside>
 
   <!-- ====================================================================
        PERSISTENT FIXED BOTTOM ANNOUNCEMENT BAR

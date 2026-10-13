@@ -18,6 +18,7 @@
   const header = document.getElementById('site-header');
   const mobileNavToggle = document.getElementById('mobile-nav-toggle');
   const mobileNavDrawer = document.getElementById('mobile-nav-drawer');
+  const mobileNavBackdrop = document.getElementById('mobile-nav-backdrop');
   const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
 
   // Suggestion Form Elements
@@ -67,6 +68,7 @@
   const qrContainer = document.getElementById('qr-code-canvas-container');
   const qrUrlDisplay = document.getElementById('qr-url-display');
   const copyLinkBtn = document.getElementById('copy-link-btn');
+  const shareNativeBtn = document.getElementById('share-native-btn');
 
   const toastNotice = document.getElementById('toast-notice');
   const toastText = document.getElementById('toast-text');
@@ -100,6 +102,7 @@
     setupManagementControls();
     setupQRModal();
     setupModals();
+    setupMobileFloatingActions();
 
     // Initial render of both the Public Wall and the Management Hub
     syncAllViews();
@@ -190,10 +193,17 @@
     categoryChips.forEach(chip => {
       if (chip.getAttribute('data-category') === category) {
         chip.classList.add('active');
+        chip.setAttribute('aria-checked', 'true');
       } else {
         chip.classList.remove('active');
+        chip.setAttribute('aria-checked', 'false');
       }
     });
+
+    // Tactile focus animation
+    titleInput.classList.remove('field-highlight');
+    void titleInput.offsetWidth;
+    titleInput.classList.add('field-highlight');
 
     updateCharCounts();
 
@@ -212,8 +222,12 @@
   function setupCategoryChipSelectors() {
     categoryChips.forEach(chip => {
       chip.addEventListener('click', () => {
-        categoryChips.forEach(c => c.classList.remove('active'));
+        categoryChips.forEach(c => {
+          c.classList.remove('active');
+          c.setAttribute('aria-checked', 'false');
+        });
         chip.classList.add('active');
+        chip.setAttribute('aria-checked', 'true');
         const selectedCat = chip.getAttribute('data-category');
         if (categoryHidden) categoryHidden.value = selectedCat;
       });
@@ -244,6 +258,9 @@
 
         if (titleInput) {
           titleInput.value = title;
+          titleInput.classList.remove('field-highlight');
+          void titleInput.offsetWidth;
+          titleInput.classList.add('field-highlight');
         }
         if (categoryHidden && category) {
           categoryHidden.value = category;
@@ -254,8 +271,10 @@
           categoryChips.forEach(c => {
             if (c.getAttribute('data-category') === category) {
               c.classList.add('active');
+              c.setAttribute('aria-checked', 'true');
             } else {
               c.classList.remove('active');
+              c.setAttribute('aria-checked', 'false');
             }
           });
         }
@@ -462,6 +481,10 @@
         btn.disabled = true;
         try {
           const res = await window.SuggestionStore.toggleUpvote(id);
+          if (res && res.hasVoted) {
+            btn.classList.add('heart-burst');
+            setTimeout(() => btn.classList.remove('heart-burst'), 600);
+          }
           showToast(res.hasVoted ? 'Upvote recorded in cloud!' : 'Upvote removed', 'success');
         } catch (err) {
           console.warn('Vote failed:', err);
@@ -721,6 +744,37 @@
         }, 2000);
       });
     });
+
+    shareNativeBtn?.addEventListener('click', async () => {
+      const url = getShareableUrl();
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'Cultural Team — Share Your Event Suggestions',
+            text: 'Scan or click to share your ideas for our upcoming college cultural events!',
+            url: url
+          });
+        } catch (err) {
+          if (err && err.name !== 'AbortError') {
+            triggerCopyFallback(url);
+          }
+        }
+      } else {
+        triggerCopyFallback(url);
+      }
+    });
+
+    function triggerCopyFallback(url) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          showToast('✓ Link copied to clipboard!', 'success');
+        }).catch(() => {
+          showToast('Link: ' + url, 'info');
+        });
+      } else {
+        showToast('Link: ' + url, 'info');
+      }
+    }
   }
 
   function openQRModal() {
@@ -757,6 +811,8 @@
       mobileNavDrawer.classList.add('is-open');
       mobileNavDrawer.removeAttribute('hidden');
       mobileNavDrawer.setAttribute('aria-hidden', 'false');
+      mobileNavBackdrop?.classList.add('is-active');
+      mobileNavBackdrop?.setAttribute('aria-hidden', 'false');
     }
 
     function closeMobileNav() {
@@ -764,6 +820,8 @@
       mobileNavToggle.setAttribute('aria-expanded', 'false');
       mobileNavDrawer.classList.remove('is-open');
       mobileNavDrawer.setAttribute('aria-hidden', 'true');
+      mobileNavBackdrop?.classList.remove('is-active');
+      mobileNavBackdrop?.setAttribute('aria-hidden', 'true');
     }
 
     mobileNavToggle.addEventListener('click', (e) => {
@@ -774,6 +832,10 @@
       } else {
         openMobileNav();
       }
+    });
+
+    mobileNavBackdrop?.addEventListener('click', () => {
+      closeMobileNav();
     });
 
     mobileNavLinks.forEach(link => {
@@ -1064,6 +1126,35 @@
     }
 
     requestFrameIfNeeded();
+  }
+
+  // ============================================================================
+  // 9. MOBILE FLOATING ACTION PILL (Quick-jump & Back-to-top)
+  // ============================================================================
+  function setupMobileFloatingActions() {
+    const floatingBar = document.getElementById('mobile-floating-actions');
+    const topBtn = document.getElementById('floating-top-btn');
+    if (!floatingBar) return;
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (window.scrollY > 380) {
+            floatingBar.classList.add('is-visible');
+          } else {
+            floatingBar.classList.remove('is-visible');
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    topBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
 
   // ============================================================================
