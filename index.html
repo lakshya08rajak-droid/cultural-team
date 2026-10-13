@@ -307,6 +307,57 @@
           <span id="form-alert-msg"></span>
         </div>
 
+        <!-- Predefined Example Suggestions (Recommended Campus Ideas) -->
+        <div class="predefined-examples-card" aria-label="Example Event Ideas">
+          <div class="predefined-examples-header">
+            <div class="predefined-title-group">
+              <span class="predefined-eyebrow-pill">💡 POPULAR EVENT IDEAS</span>
+              <h3 class="predefined-headline">Trending Suggestions (Tap Any Idea to Quick-Fill)</h3>
+            </div>
+            <span class="predefined-disclaimer-badge">Suggested ideas · Not confirmed events</span>
+          </div>
+          <p class="predefined-subtext">
+            Need inspiration? Tap any popular event idea below to load it directly into your submission form — customize it, add your spin, and submit!
+          </p>
+          <div class="predefined-chips-grid" role="list">
+            <button type="button" class="example-suggestion-chip" data-title="Freshers" data-category="Parties and Celebrations" role="listitem" title="Click to fill: Freshers">
+              <span class="chip-icon">🎉</span>
+              <span class="chip-text">Freshers</span>
+              <span class="chip-cat-tag">Parties</span>
+            </button>
+            <button type="button" class="example-suggestion-chip" data-title="Prom Night" data-category="Parties and Celebrations" role="listitem" title="Click to fill: Prom Night">
+              <span class="chip-icon">👑</span>
+              <span class="chip-text">Prom Night</span>
+              <span class="chip-cat-tag">Celebrations</span>
+            </button>
+            <button type="button" class="example-suggestion-chip" data-title="Halloween Night" data-category="Parties and Celebrations" role="listitem" title="Click to fill: Halloween Night">
+              <span class="chip-icon">🎃</span>
+              <span class="chip-text">Halloween Night</span>
+              <span class="chip-cat-tag">Costume Fest</span>
+            </button>
+            <button type="button" class="example-suggestion-chip" data-title="Diwali Party" data-category="Cultural Events" role="listitem" title="Click to fill: Diwali Party">
+              <span class="chip-icon">🪔</span>
+              <span class="chip-text">Diwali Party</span>
+              <span class="chip-cat-tag">Cultural</span>
+            </button>
+            <button type="button" class="example-suggestion-chip" data-title="Navratri" data-category="Cultural Events" role="listitem" title="Click to fill: Navratri">
+              <span class="chip-icon">🪘</span>
+              <span class="chip-text">Navratri</span>
+              <span class="chip-cat-tag">Garba &amp; Raas</span>
+            </button>
+            <button type="button" class="example-suggestion-chip" data-title="Dance Competition" data-category="Competitions" role="listitem" title="Click to fill: Dance Competition">
+              <span class="chip-icon">💃</span>
+              <span class="chip-text">Dance Competition</span>
+              <span class="chip-cat-tag">Stage Battle</span>
+            </button>
+            <button type="button" class="example-suggestion-chip chip-super" data-title="Something Supercalifragilisticexpialidocious" data-category="Other Ideas" role="listitem" title="Click to fill: Something Supercalifragilisticexpialidocious">
+              <span class="chip-icon">🪄</span>
+              <span class="chip-text">Something Supercalifragilisticexpialidocious</span>
+              <span class="chip-cat-tag">Extraordinary</span>
+            </button>
+          </div>
+        </div>
+
         <form id="suggestion-form" novalidate>
           <!-- Honeypot Bot Trap -->
           <div class="honey-field">
@@ -442,9 +493,22 @@
 
       <!-- Wall Header Box with Real Counter -->
       <div class="wall-header-box">
-        <div class="wall-counter-block">
-          <span class="wall-counter-label">COMMUNITY IDEAS:</span>
-          <span id="community-counter-number" class="wall-counter-number">0</span>
+        <div class="wall-stats-summary-strip">
+          <div class="wall-counter-block">
+            <span class="wall-counter-label">COMMUNITY IDEAS:</span>
+            <span id="community-counter-number" class="wall-counter-number">0</span>
+          </div>
+
+          <div class="wall-metrics-group">
+            <div class="wall-metric-badge" title="Total votes cast by students">
+              <span class="wall-metric-label">TOTAL VOTES:</span>
+              <span id="wall-total-votes" class="wall-metric-val">0</span>
+            </div>
+            <div class="wall-metric-badge" title="Suggestions that have received at least one vote">
+              <span class="wall-metric-label">ACTIVE IN VOTING:</span>
+              <span id="wall-active-ideas" class="wall-metric-val">0</span>
+            </div>
+          </div>
         </div>
 
         <!-- Sorting & Filtering Controls -->

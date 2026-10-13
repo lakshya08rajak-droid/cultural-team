@@ -133,15 +133,17 @@
 
     /**
      * Parse and normalize rows from Supabase database
+     * Strictly computes real database votes with zero fake numbers
      */
     _normalizeRow(row) {
       let title = row.title;
       let category = row.category || 'Other Ideas';
       let description = row.description || '';
-      let upvotes = row.upvotes || 0;
+      // Real database column is the single source of truth for vote counts
+      let upvotes = (typeof row.upvotes === 'number') ? Math.max(0, row.upvotes) : 0;
       let reviewed = Boolean(row.is_approved === false ? false : (row.reviewed || false));
 
-      // Handle fallback schema where details are stored in 'suggestion' column
+      // Handle legacy fallback schema where details were stored in 'suggestion' column
       if (!title && row.suggestion) {
         try {
           const parsed = JSON.parse(row.suggestion);
@@ -149,8 +151,12 @@
             title = parsed.title || row.suggestion;
             category = parsed.category || category;
             description = parsed.description || description;
-            upvotes = parsed.upvotes !== undefined ? parsed.upvotes : upvotes;
-            if (parsed.reviewed !== undefined) reviewed = Boolean(parsed.reviewed);
+            if (row.upvotes === undefined || row.upvotes === null) {
+              upvotes = typeof parsed.upvotes === 'number' ? Math.max(0, parsed.upvotes) : 0;
+            }
+            if (parsed.reviewed !== undefined && (row.reviewed === undefined || row.reviewed === null)) {
+              reviewed = Boolean(parsed.reviewed);
+            }
           } else {
             title = String(row.suggestion);
           }
@@ -540,21 +546,26 @@
 
     /**
      * Aggregate statistics from live Supabase dataset
+     * All numbers reflect real database records
      */
     getStats() {
       let reviewedCount = 0;
       let totalUpvotes = 0;
+      let activeVotedCount = 0;
 
       for (const item of this.items) {
         if (item.reviewed) reviewedCount++;
-        totalUpvotes += (item.upvotes || 0);
+        const votes = Number(item.upvotes) || 0;
+        totalUpvotes += votes;
+        if (votes > 0) activeVotedCount++;
       }
 
       return {
         total: this.items.length,
         reviewedCount: reviewedCount,
-        pendingCount: this.items.length - reviewedCount,
-        totalUpvotes: totalUpvotes
+        pendingCount: Math.max(0, this.items.length - reviewedCount),
+        totalUpvotes: totalUpvotes,
+        activeVotedCount: activeVotedCount
       };
     }
   }

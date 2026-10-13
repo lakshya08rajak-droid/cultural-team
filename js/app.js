@@ -91,6 +91,7 @@
     renderInspirationGrid();
     setupCategoryChipSelectors();
     setupCharCounters();
+    setupQuickIdeas();
     setupFormSubmission();
     setupManagementControls();
     setupQRModal();
@@ -229,8 +230,59 @@
     }
   }
 
+  function setupQuickIdeas() {
+    const chips = document.querySelectorAll('.example-suggestion-chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const title = chip.getAttribute('data-title');
+        const category = chip.getAttribute('data-category');
+        if (!title) return;
+
+        if (titleInput) {
+          titleInput.value = title;
+        }
+        if (categoryHidden && category) {
+          categoryHidden.value = category;
+        }
+
+        // Highlight matching category chip in the form
+        if (category) {
+          categoryChips.forEach(c => {
+            if (c.getAttribute('data-category') === category) {
+              c.classList.add('active');
+            } else {
+              c.classList.remove('active');
+            }
+          });
+        }
+
+        updateCharCounts();
+        hideFormAlert();
+
+        // Subtle micro-feedback animation on clicked chip
+        chip.style.transform = 'scale(0.95)';
+        setTimeout(() => { chip.style.transform = ''; }, 180);
+
+        showToast(`Loaded "${title}" — feel free to customize or submit!`, 'success');
+
+        // Scroll smoothly to form and focus description
+        const formCard = document.querySelector('.suggestion-form-card');
+        if (formCard) {
+          formCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        setTimeout(() => {
+          if (descInput) descInput.focus();
+          else if (titleInput) titleInput.focus();
+        }, 300);
+      });
+    });
+  }
+
   function setupFormSubmission() {
     if (!suggestionForm) return;
+
+    let lastSubmittedTitle = '';
+    let lastSubmitTime = 0;
 
     suggestionForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -252,6 +304,12 @@
         return;
       }
 
+      const now = Date.now();
+      if (title.toLowerCase() === lastSubmittedTitle.toLowerCase() && (now - lastSubmitTime < 15000)) {
+        showFormAlert('You just submitted this idea! Please wait a moment before submitting it again.');
+        return;
+      }
+
       setSubmitLoading(true);
 
       try {
@@ -260,6 +318,9 @@
           category,
           description
         });
+
+        lastSubmittedTitle = title;
+        lastSubmitTime = Date.now();
 
         // SUCCESS: Show popup modal
         openSuccessModal(newRecord.title, newRecord.category);
@@ -331,12 +392,29 @@
     const stats = window.SuggestionStore.getStats();
     animateCounter(communityCounterEl, stats.total || 0);
 
+    const totalVotesEl = document.getElementById('wall-total-votes');
+    if (totalVotesEl) animateCounter(totalVotesEl, stats.totalUpvotes || 0);
+
+    const activeIdeasEl = document.getElementById('wall-active-ideas');
+    if (activeIdeasEl) animateCounter(activeIdeasEl, stats.activeVotedCount || 0);
+
+    if (!window.SuggestionStore.hasLoaded && items.length === 0) {
+      communityWallGrid.innerHTML = `
+        <div class="wall-empty-state">
+          <div class="wall-empty-icon" style="font-size: 2.2rem;">⏳</div>
+          <h4 class="wall-empty-title">Fetching Real Community Ideas...</h4>
+          <p class="wall-empty-sub">Connecting to Supabase to synchronize live student suggestions and votes.</p>
+        </div>
+      `;
+      return;
+    }
+
     if (items.length === 0) {
       communityWallGrid.innerHTML = `
         <div class="wall-empty-state">
           <div class="wall-empty-icon">💡</div>
           <h4 class="wall-empty-title">Be The First Voice!</h4>
-          <p class="wall-empty-sub">No suggestions have been submitted in this category yet. Your creative idea could become the main event at our next college fest!</p>
+          <p class="wall-empty-sub">No student suggestions have been submitted yet. Your creative idea could become the main event at our next college fest!</p>
           <a href="#suggestions-section" class="btn btn-gold btn-sm">Suggest an Event Now</a>
         </div>
       `;
@@ -377,11 +455,15 @@
     communityWallGrid.querySelectorAll('.btn-upvote').forEach(btn => {
       btn.addEventListener('click', async () => {
         const id = btn.getAttribute('data-id');
+        btn.disabled = true;
         try {
           const res = await window.SuggestionStore.toggleUpvote(id);
-          showToast(res.hasVoted ? 'Upvote recorded!' : 'Upvote removed', 'success');
+          showToast(res.hasVoted ? 'Upvote recorded in cloud!' : 'Upvote removed', 'success');
         } catch (err) {
           console.warn('Vote failed:', err);
+          showToast(err.message || 'Voting temporarily unavailable', 'danger');
+        } finally {
+          btn.disabled = false;
         }
       });
     });

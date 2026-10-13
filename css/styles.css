@@ -927,66 +927,234 @@ body {
    4. SUGGESTION SUBMISSION SECTION
    "WHAT SHOULD WE HOST NEXT?"
    ============================================================================== */
+/* ==============================================================================
+   4. SUGGESTION SUBMISSION SECTION (MAIN CAMPUS HIGHLIGHT)
+   "WHAT SHOULD WE HOST NEXT?"
+   ============================================================================== */
 .section-wrapper {
-  padding: 4.5rem 0 2rem;
+  padding: 5rem 0 2.5rem;
+  position: relative;
+}
+
+#suggestions-section {
+  padding: 5.5rem 0 3.5rem;
   position: relative;
 }
 
 .section-header {
   text-align: center;
-  max-width: 760px;
-  margin: 0 auto 3rem;
+  max-width: 800px;
+  margin: 0 auto 3.25rem;
 }
 
 .section-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
+  gap: 0.45rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--gold-primary);
-  margin-bottom: 0.75rem;
+  color: #fffbf5;
+  background: rgba(109, 41, 50, 0.55);
+  border: 1px solid rgba(232, 216, 196, 0.35);
+  padding: 0.35rem 1rem;
+  border-radius: var(--radius-full);
+  margin-bottom: 1rem;
+  box-shadow: 0 0 20px rgba(232, 216, 196, 0.15);
 }
 
 .section-title-roman {
   font-family: var(--font-roman-title);
   font-weight: 800;
-  font-size: clamp(1.85rem, 4.5vw, 3rem);
+  font-size: clamp(2rem, 4.8vw, 3.2rem);
   line-height: 1.15;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   margin-bottom: 1rem;
-  color: #fff;
+  color: #fffbf5;
   background: linear-gradient(135deg, #fffbf5 35%, #e8d8c4 75%, #c7b7a3 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.section-lead-roman {
-  font-family: var(--font-roman-serif);
-  font-size: clamp(1rem, 2vw, 1.18rem);
-  line-height: 1.68;
-  color: var(--text-secondary);
+/* Prominent Off-White Suggestion Section Headline */
+#suggestions-section .section-title-roman {
+  font-size: clamp(2.35rem, 5.8vw, 3.8rem);
+  letter-spacing: 0.08em;
+  line-height: 1.12;
+  margin-bottom: 1.25rem;
+  color: #fffbf5;
+  background: linear-gradient(135deg, #ffffff 0%, #fffbf5 35%, #f4eae0 70%, #e8d8c4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 22px rgba(86, 28, 36, 0.75)) drop-shadow(0 0 35px rgba(232, 216, 196, 0.35));
 }
 
-/* The Submission Form Container */
-.suggestion-form-card {
-  max-width: 740px;
+#suggestions-section .section-lead-roman {
+  font-family: var(--font-roman-serif);
+  font-size: clamp(1.08rem, 2.2vw, 1.26rem);
+  line-height: 1.75;
+  color: #f4eae0;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 2.5rem;
-  border-radius: var(--radius-lg);
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  box-shadow: var(--shadow-lg), 0 0 50px rgba(109, 41, 50, 0.25);
+  text-shadow: 0 2px 12px rgba(22, 5, 8, 0.6);
+}
+
+/* The Highlighted Suggestion Submission Container */
+.suggestion-form-card {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 3rem 2.85rem;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(165deg, rgba(78, 24, 32, 0.88) 0%, rgba(56, 17, 24, 0.92) 55%, rgba(42, 11, 16, 0.96) 100%);
+  border: 1.5px solid rgba(232, 216, 196, 0.45);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: 
+    0 25px 65px rgba(18, 4, 7, 0.75), 
+    0 0 50px rgba(232, 216, 196, 0.22),
+    inset 0 1px 0 rgba(255, 251, 245, 0.45),
+    inset 0 0 20px rgba(109, 41, 50, 0.25);
   position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.suggestion-form-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #c7b7a3 20%, #fffbf5 50%, #e8d8c4 80%, transparent);
+  box-shadow: 0 0 15px rgba(255, 251, 245, 0.75);
+}
+
+/* Predefined Example Suggestions Box (Quick Ideas) */
+.predefined-examples-card {
+  background: rgba(35, 10, 15, 0.72);
+  border: 1px solid rgba(232, 216, 196, 0.32);
+  border-radius: var(--radius-lg);
+  padding: 1.6rem 1.85rem;
+  margin-bottom: 2.5rem;
+  box-shadow: inset 0 1px 0 rgba(255, 251, 245, 0.15), 0 8px 24px rgba(20, 4, 7, 0.35);
+}
+
+.predefined-examples-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.predefined-eyebrow-pill {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fffbf5;
+  background: rgba(109, 41, 50, 0.6);
+  border: 1px solid rgba(232, 216, 196, 0.4);
+  padding: 0.28rem 0.75rem;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.predefined-headline {
+  font-family: var(--font-roman-title);
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+  color: #fffbf5;
+  margin-top: 0.45rem;
+}
+
+.predefined-disclaimer-badge {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #e8d8c4;
+  background: rgba(232, 216, 196, 0.12);
+  border: 1px solid rgba(199, 183, 163, 0.25);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+}
+
+.predefined-subtext {
+  font-size: 0.9rem;
+  color: #f4eae0;
+  margin-bottom: 1.25rem;
+  line-height: 1.55;
+}
+
+.predefined-chips-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.example-suggestion-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 1.15rem;
+  border-radius: var(--radius-full);
+  background: rgba(62, 19, 26, 0.85);
+  border: 1.2px solid rgba(232, 216, 196, 0.32);
+  color: #fffbf5;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(20, 4, 7, 0.25);
+}
+
+.example-suggestion-chip:hover {
+  background: rgba(98, 30, 39, 0.95);
+  border-color: #ffffff;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(232, 216, 196, 0.3), 0 2px 6px rgba(22, 5, 8, 0.4);
+}
+
+.example-suggestion-chip:active {
+  transform: translateY(0);
+}
+
+.example-suggestion-chip .chip-icon {
+  font-size: 1.1rem;
+}
+
+.example-suggestion-chip .chip-cat-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.18rem 0.45rem;
+  border-radius: var(--radius-full);
+  background: rgba(232, 216, 196, 0.15);
+  color: #e8d8c4;
+}
+
+.example-suggestion-chip.chip-super {
+  border-color: rgba(232, 216, 196, 0.55);
+  background: linear-gradient(135deg, rgba(86, 28, 36, 0.9) 0%, rgba(109, 41, 50, 0.85) 100%);
+  box-shadow: 0 0 18px rgba(232, 216, 196, 0.25);
+}
+
+.example-suggestion-chip.chip-super:hover {
+  border-color: #ffffff;
+  box-shadow: 0 0 28px rgba(232, 216, 196, 0.5);
 }
 
 .form-group {
-  margin-bottom: 1.6rem;
+  margin-bottom: 2rem;
   text-align: left;
 }
 
@@ -994,11 +1162,12 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-  letter-spacing: 0.02em;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fffbf5;
+  margin-bottom: 0.65rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .form-label span.req {
@@ -1006,38 +1175,41 @@ body {
 }
 
 .form-label span.char-count {
-  font-size: 0.72rem;
+  font-size: 0.76rem;
   color: var(--text-muted);
-  font-weight: 400;
+  font-weight: 500;
+  text-transform: none;
 }
 
 .form-input,
 .form-textarea,
 .form-select {
   width: 100%;
-  padding: 0.85rem 1.15rem;
+  padding: 0.95rem 1.25rem;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
-  background: rgba(43, 12, 17, 0.85);
-  color: #fffbf5;
+  border: 1.5px solid rgba(199, 183, 163, 0.3);
+  background: rgba(35, 9, 14, 0.88);
+  color: #ffffff;
   font-family: var(--font-sans);
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: 0.98rem;
+  line-height: 1.55;
   transition: all 0.2s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.35);
 }
 
 .form-input::placeholder,
 .form-textarea::placeholder {
-  color: rgba(232, 216, 196, 0.45);
+  color: rgba(232, 216, 196, 0.48);
 }
 
 .form-input:focus,
 .form-textarea:focus,
 .form-select:focus {
   outline: none;
-  border-color: #e8d8c4;
-  background: rgba(56, 17, 24, 0.95);
-  box-shadow: 0 0 0 3px rgba(232, 216, 196, 0.2);
+  border-color: #fffbf5;
+  background: rgba(48, 14, 21, 0.95);
+  box-shadow: 0 0 0 3px rgba(232, 216, 196, 0.28), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
 }
 
 .form-textarea {
@@ -1298,6 +1470,13 @@ body {
   gap: 1.25rem;
 }
 
+.wall-stats-summary-strip {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  flex-wrap: wrap;
+}
+
 .wall-counter-block {
   display: flex;
   align-items: baseline;
@@ -1310,7 +1489,7 @@ body {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: #fffbf5;
 }
 
 .wall-counter-number {
@@ -1321,6 +1500,42 @@ body {
   background: linear-gradient(135deg, #fffbf5 30%, #e8d8c4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.wall-metrics-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.wall-metric-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-full);
+  background: rgba(45, 13, 19, 0.75);
+  border: 1px solid rgba(232, 216, 196, 0.28);
+  box-shadow: 0 2px 8px rgba(18, 4, 7, 0.35);
+}
+
+.wall-metric-label {
+  font-family: var(--font-roman-title);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.wall-metric-val {
+  font-family: var(--font-roman-title);
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #fffbf5;
+  min-width: 1.2rem;
+  text-align: center;
 }
 
 .wall-controls {
