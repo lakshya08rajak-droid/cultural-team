@@ -221,10 +221,10 @@
 
   function updateCharCounts() {
     if (titleInput && titleCharCount) {
-      titleCharCount.textContent = `${titleInput.value.length} / 100`;
+      titleCharCount.textContent = `${titleInput.value.length} / 120`;
     }
     if (descInput && descCharCount) {
-      descCharCount.textContent = `${descInput.value.length} / 350`;
+      descCharCount.textContent = `${descInput.value.length} / 1000`;
     }
   }
 

@@ -246,23 +246,59 @@
     }
 
     /**
-     * Submit a new student suggestion to Supabase
+     * Submit a new student suggestion to Supabase with server-side rate limiting & validation
      */
     async add({ title, category, description }) {
-      const cleanTitle = sanitize(title);
-      const cleanDesc = sanitize(description);
+      const cleanTitle = typeof title === 'string' ? sanitize(title.trim()) : '';
+      const cleanDesc = typeof description === 'string' ? sanitize(description.trim()) : '';
       const validCategory = category || 'Other Ideas';
 
+      // Client-side strict validation
       if (!cleanTitle || cleanTitle.length < 2) {
-        throw new Error('Please enter a suggestion title of at least 2 characters.');
+        throw new Error('Please enter an event suggestion title of at least 2 characters.');
       }
-      if (cleanTitle.length > 100) {
-        throw new Error('Suggestion title cannot exceed 100 characters.');
+      if (cleanTitle.length > 120) {
+        throw new Error('Suggestion title cannot exceed 120 characters.');
       }
-      if (cleanDesc && cleanDesc.length > 350) {
-        throw new Error('Description cannot exceed 350 characters.');
+      if (cleanDesc && cleanDesc.length > 1000) {
+        throw new Error('Description cannot exceed 1,000 characters.');
       }
 
+      // 1. Try trusted serverless endpoint /api/submit-suggestion for server-side rate limiting & honeypot verification
+      try {
+        const apiResp = await fetch('/api/submit-suggestion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: cleanTitle,
+            category: validCategory,
+            description: cleanDesc
+          })
+        });
+
+        if (apiResp.status === 429) {
+          const errData = await apiResp.json().catch(() => ({}));
+          throw new Error(errData.error || 'Submission rate limit reached. Please wait a few minutes before submitting another suggestion.');
+        }
+
+        if (apiResp.ok) {
+          const result = await apiResp.json();
+          if (result.success && result.data) {
+            const normalized = this._normalizeRow(result.data);
+            this.items.unshift(normalized);
+            this._notifyListeners();
+            setTimeout(() => this.refresh(true), 600);
+            return normalized;
+          }
+        }
+      } catch (apiErr) {
+        if (apiErr.message && apiErr.message.includes('rate limit')) {
+          throw apiErr;
+        }
+        // Fallback to direct Supabase client with PostgreSQL RLS constraints if running in local preview
+      }
+
+      // 2. Direct Supabase PostgREST insertion fallback
       const payloadFull = {
         title: cleanTitle,
         category: validCategory,
@@ -279,7 +315,7 @@
           body: JSON.stringify(payloadFull)
         });
 
-        // If 'title' or 'category' column does not exist yet (PGRST204), fallback to 'suggestion' column
+        // Fallback if 'title' column not present yet
         if (!resp.ok) {
           const errData = await resp.json().catch(() => ({}));
           if (errData.code === 'PGRST204' || resp.status === 400) {
@@ -309,11 +345,8 @@
         const createdRow = Array.isArray(data) ? data[0] : data;
         const normalized = this._normalizeRow(createdRow || payloadFull);
 
-        // Prepend to current in-memory list immediately
         this.items.unshift(normalized);
         this._notifyListeners();
-
-        // Refresh to guarantee server-synced ID and order
         setTimeout(() => this.refresh(true), 600);
 
         return normalized;
@@ -324,7 +357,7 @@
     }
 
     /**
-     * Upvote or un-vote a suggestion in Supabase
+     * Upvote or un-vote a suggestion via controlled RPC stored procedure
      */
     async toggleUpvote(suggestionId) {
       if (!suggestionId) throw new Error('Invalid suggestion ID');
@@ -345,25 +378,18 @@
       saveLocalVotedIds(Array.from(votedIds));
       this._notifyListeners();
 
-      // Persist update to Supabase
+      // Persist update via secure RPC toggle_upvote
       try {
-        // Try atomic RPC toggle_upvote
-        const rpcResp = await fetch(`${this.supabaseUrl}/rest/v1/rpc/toggle_upvote`, {
+        await fetch(`${this.supabaseUrl}/rest/v1/rpc/toggle_upvote`, {
           method: 'POST',
           headers: this._getHeaders(),
-          body: JSON.stringify({ p_id: parseInt(suggestionId, 10), p_delta: hasVotedNow ? 1 : -1 })
+          body: JSON.stringify({
+            p_id: parseInt(suggestionId, 10),
+            p_delta: hasVotedNow ? 1 : -1
+          })
         });
-
-        if (!rpcResp.ok) {
-          // Fallback direct PATCH update
-          await fetch(`${this.supabaseUrl}/rest/v1/suggestions?id=eq.${suggestionId}`, {
-            method: 'PATCH',
-            headers: this._getHeaders(),
-            body: JSON.stringify({ upvotes: newVotes })
-          });
-        }
       } catch (err) {
-        console.warn('Upvote sync error:', err);
+        console.warn('RPC toggle_upvote notice:', err);
       }
 
       return {
