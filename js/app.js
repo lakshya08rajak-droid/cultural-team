@@ -506,7 +506,7 @@
     function getOrPromptAdminPasscode(customPrompt) {
       let pass = sessionStorage.getItem('cultural_admin_pass');
       if (pass) return pass;
-      pass = prompt(customPrompt || 'Authorized Action: Enter Organizer Passcode (default: cultural2026):', '');
+      pass = prompt(customPrompt || 'Authorized Action: Enter Organizer Passcode:', '');
       if (pass !== null && pass.trim()) {
         sessionStorage.setItem('cultural_admin_pass', pass.trim());
         return pass.trim();

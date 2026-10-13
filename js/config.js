@@ -37,10 +37,7 @@ const CONFIG = {
     maxTitleLength: 100,
     maxDescriptionLength: 350,
     submissionCooldownSeconds: 5
-  },
-
-  // Organizer Default Passcode
-  adminPasscode: "cultural2026"
+  }
 };
 
 if (typeof window !== "undefined") {

@@ -431,10 +431,14 @@
 
       const prevReviewed = item.reviewed;
       item.reviewed = !Boolean(item.reviewed);
-      this._notifyListeners();
+      if (!passcode) {
+        this.items = this.items.map(s => s.id === suggestionId ? { ...s, reviewed: prevReviewed } : s);
+        this._notifyListeners();
+        throw new Error('Unauthorized: Organizer passcode is required.');
+      }
 
       const numId = parseInt(suggestionId, 10);
-      const pass = passcode || window.APP_CONFIG?.adminPasscode || 'cultural2026';
+      const pass = String(passcode).trim();
 
       // 1. Try serverless admin endpoint
       try {
@@ -480,8 +484,11 @@
      */
     async delete(suggestionId, passcode) {
       if (!suggestionId) throw new Error('Invalid suggestion ID');
+      if (!passcode) {
+        throw new Error('Unauthorized: Organizer passcode is required.');
+      }
       const numId = parseInt(suggestionId, 10);
-      const pass = passcode || window.APP_CONFIG?.adminPasscode || 'cultural2026';
+      const pass = String(passcode).trim();
 
       // 1. Try serverless admin endpoint
       try {
