@@ -1,21 +1,12 @@
 /**
- * CULTURAL TEAM — CONFIGURATION & DATABASE SETTINGS
+ * CULTURAL TEAM — APPLICATION CONFIGURATION (FRONTEND ONLY)
  * 
- * To connect your Supabase project:
- * 1. Go to https://supabase.com and create or open your project.
- * 2. In Project Settings > API, copy your "Project URL" and "anon public" API Key.
- * 3. Replace the values below or set window.__SUPABASE_ENV__ in your deployment.
- * 4. Run `supabase/schema.sql` in your Supabase SQL Editor to initialize tables & RLS policies.
+ * Standalone static configuration without backend dependencies.
+ * All suggestions and votes are managed via the browser's localStorage.
  */
 
 const CONFIG = {
-  // SUPABASE CLOUD DATABASE CONFIGURATION
-  // Place your real Supabase credentials here or provide them via window.__SUPABASE_ENV__
-  supabaseUrl: (typeof window !== "undefined" && window.__SUPABASE_ENV__?.url) || "",
-  supabaseAnonKey: (typeof window !== "undefined" && window.__SUPABASE_ENV__?.anonKey) || "",
-
   // Production Domain (used for QR code generation and sharing)
-  // When deployed on Vercel, this is auto-detected from window.location.href
   productionUrl: "https://cultural-team.vercel.app",
 
   // Cultural Team Brand Identity
@@ -29,7 +20,7 @@ const CONFIG = {
     year: "2026"
   },
 
-  // Allowed Categories
+  // Allowed Event Categories
   categories: [
     "Cultural Events",
     "Music and Dance",
@@ -39,12 +30,19 @@ const CONFIG = {
     "Other Ideas"
   ],
 
-  // Form Validation & Spam Rules
+  // Form Validation & Anti-Spam Rules
   rules: {
     minTitleLength: 2,
     maxTitleLength: 100,
     maxDescriptionLength: 350,
-    submissionCooldownSeconds: 25 // Prevent spamming submissions
+    submissionCooldownSeconds: 5
+  },
+
+  // Storage Keys for Browser Persistence
+  storage: {
+    suggestionsKey: "cultural_team_suggestions_v2",
+    voterTokenKey: "cultural_team_voter_id",
+    votedIdsKey: "cultural_team_voted_ids"
   }
 };
 

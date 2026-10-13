@@ -38,9 +38,6 @@
 
   <!-- Main Editorial Stylesheet -->
   <link rel="stylesheet" href="css/styles.css" />
-
-  <!-- Supabase Official Client Library for Real-Time Database -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <!-- Atmospheric Aurora Background Orbs -->
@@ -81,21 +78,21 @@
           <li><a href="#suggestions-section" class="nav-link">Suggest Event</a></li>
           <li><a href="#inspiration-section" class="nav-link">30 Ideas</a></li>
           <li><a href="#community-wall" class="nav-link">Community Wall</a></li>
+          <li><a href="#suggestion-management" class="nav-link">Organizer Hub</a></li>
         </ul>
       </nav>
 
       <div class="header-actions">
-        <!-- Live Database Status Badge -->
-        <button
-          type="button"
-          id="db-status-badge"
+        <!-- Quick Link to Organizer Management -->
+        <a
+          href="#suggestion-management"
           class="db-status-badge"
-          aria-label="Database Connection Status"
-          title="Click to view database connection status"
+          aria-label="Organizer Management Panel"
+          title="Open Local Suggestions Management Hub"
         >
-          <span id="db-status-dot" class="db-status-dot"></span>
-          <span id="db-status-text">Cloud Database</span>
-        </button>
+          <span class="db-status-dot"></span>
+          <span>Organizer Hub</span>
+        </a>
 
         <!-- QR Code Quick Trigger -->
         <button
@@ -193,7 +190,6 @@
 
       <!-- ================================================================
            3. MYSTERY VISUAL ELEMENT — THE VAULT OF CURIOSITY
-           (No fake dates invented; pure excitement, radar sweep & hype mechanics)
            ================================================================ -->
       <div id="mystery" class="mystery-card" aria-label="Classified Event Enigma">
         <div class="mystery-header">
@@ -343,7 +339,7 @@
           <!-- Form Action Row -->
           <div class="form-submit-row">
             <p class="form-disclaimer">
-              🔒 Open to everyone · No account required · Your suggestion is instantly saved and shared with the community.
+              🔒 Open to everyone · No account required · Instantly saved to your browser and updated across the live wall.
             </p>
             <button type="submit" id="submit-suggestion-btn" class="btn-submit-main">
               <span>Submit Suggestion</span>
@@ -405,7 +401,7 @@
         </p>
       </div>
 
-      <!-- Wall Header Box with Real Database Counter -->
+      <!-- Wall Header Box with Real Counter -->
       <div class="wall-header-box">
         <div class="wall-counter-block">
           <span class="wall-counter-label">COMMUNITY IDEAS:</span>
@@ -434,14 +430,107 @@
 
       <!-- Public Suggestion Cards Grid -->
       <div id="community-wall-grid" class="community-grid" aria-live="polite">
-        <!-- Live cards populated from real database -->
+        <!-- Live cards populated from suggestion store -->
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         7. DEDICATED SUGGESTIONS MANAGEMENT & CURATION HUB
+         ================================================================== -->
+    <section id="suggestion-management" class="mgmt-section" aria-labelledby="mgmt-title">
+      <div class="section-header">
+        <div class="section-eyebrow">
+          <span>⚙️ Organizer Control Panel</span>
+        </div>
+        <h2 id="mgmt-title" class="section-title-roman">
+          SUGGESTIONS MANAGEMENT HUB
+        </h2>
+        <p class="section-lead-roman">
+          Review incoming student proposals, mark shortlisted concepts, and manage all suggestions stored in this browser.
+        </p>
+      </div>
+
+      <div class="mgmt-panel">
+        <!-- Honest Local Storage Notice -->
+        <div class="mgmt-notice-box">
+          <span class="mgmt-notice-icon" aria-hidden="true">ℹ️</span>
+          <div class="mgmt-notice-text">
+            <strong>Browser-Local Storage Notice:</strong> This website runs in a 100% frontend-only environment without backend dependencies. Suggestions submitted here are saved to your browser's <code>localStorage</code> and persist across refreshes on this device. They do not synchronize automatically across different visitors' phones.
+          </div>
+        </div>
+
+        <!-- Real-Time Statistics Grid -->
+        <div class="mgmt-stats-grid">
+          <div class="mgmt-stat-card">
+            <span class="mgmt-stat-label">Total Submissions</span>
+            <span id="mgmt-stat-total" class="mgmt-stat-number gold">0</span>
+          </div>
+          <div class="mgmt-stat-card">
+            <span class="mgmt-stat-label">Pending Review</span>
+            <span id="mgmt-stat-pending" class="mgmt-stat-number amber">0</span>
+          </div>
+          <div class="mgmt-stat-card">
+            <span class="mgmt-stat-label">Reviewed / Shortlisted</span>
+            <span id="mgmt-stat-reviewed" class="mgmt-stat-number emerald">0</span>
+          </div>
+          <div class="mgmt-stat-card">
+            <span class="mgmt-stat-label">Total Upvotes Cast</span>
+            <span id="mgmt-stat-upvotes" class="mgmt-stat-number pink">0</span>
+          </div>
+        </div>
+
+        <!-- Management Search & Filter Toolbar -->
+        <div class="mgmt-toolbar">
+          <div class="mgmt-search-row">
+            <input
+              type="text"
+              id="mgmt-search-input"
+              class="mgmt-search-input"
+              placeholder="🔍 Search suggestions by title or keyword..."
+              aria-label="Search suggestions by keyword"
+            />
+          </div>
+
+          <div class="mgmt-filter-controls">
+            <!-- Status Tabs -->
+            <div class="mgmt-status-tabs" role="tablist" aria-label="Filter by review status">
+              <button type="button" class="mgmt-tab-btn active" data-status="ALL">All Submissions</button>
+              <button type="button" class="mgmt-tab-btn" data-status="PENDING">⏳ Pending Review</button>
+              <button type="button" class="mgmt-tab-btn" data-status="REVIEWED">✓ Reviewed</button>
+            </div>
+
+            <!-- Category & Sort Dropdowns -->
+            <div class="mgmt-dropdowns-group">
+              <select id="mgmt-category-select" class="sort-select" aria-label="Filter management by category">
+                <option value="ALL">All Categories</option>
+                <option value="Cultural Events">Cultural Events</option>
+                <option value="Music and Dance">Music and Dance</option>
+                <option value="Competitions">Competitions</option>
+                <option value="Parties and Celebrations">Parties and Celebrations</option>
+                <option value="Workshops">Workshops</option>
+                <option value="Other Ideas">Other Ideas</option>
+              </select>
+
+              <select id="mgmt-sort-select" class="sort-select" aria-label="Sort management suggestions">
+                <option value="newest">✨ Newest First</option>
+                <option value="popular">🔥 Highest Upvotes</option>
+                <option value="oldest">⏳ Oldest First</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Management Cards Grid -->
+        <div id="mgmt-grid" class="mgmt-grid" aria-live="polite">
+          <!-- Populated dynamically via js/app.js -->
+        </div>
       </div>
     </section>
 
   </main>
 
   <!-- ====================================================================
-       7. SUBMISSION SUCCESS POPUP MODAL
+       8. SUBMISSION SUCCESS POPUP MODAL
        ==================================================================== -->
   <div id="success-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="success-modal-title">
     <div class="modal-container">
@@ -481,7 +570,7 @@
   </div>
 
   <!-- ====================================================================
-       8. QR CODE PUBLIC ACCESS MODAL
+       9. QR CODE PUBLIC ACCESS MODAL
        ==================================================================== -->
   <div id="qr-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title">
     <div class="modal-container">
@@ -517,52 +606,15 @@
   </div>
 
   <!-- ====================================================================
-       9. DATABASE CONNECTION GUIDE MODAL
+       10. FLOATING TOAST NOTIFICATION
        ==================================================================== -->
-  <div id="db-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="db-modal-title">
-    <div class="modal-container" style="max-width: 620px; text-align: left;">
-      <button type="button" id="db-modal-close" class="modal-close-btn" aria-label="Close modal">×</button>
-
-      <h3 id="db-modal-title" class="success-title-roman" style="text-align: center; margin-bottom: 0.5rem;">
-        SUPABASE DATABASE SETUP GUIDE
-      </h3>
-      <p style="font-size: 0.88rem; color: var(--text-secondary); text-align: center; margin-bottom: 1.5rem;">
-        Connect your persistent cloud database in 2 minutes:
-      </p>
-
-      <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.9rem;">
-        <div>
-          <strong style="color: var(--gold-light);">Step 1:</strong> Create a free project at <a href="https://supabase.com" target="_blank" style="color:#38bdf8;">supabase.com</a>.
-        </div>
-        <div>
-          <strong style="color: var(--gold-light);">Step 2:</strong> Open the <strong>SQL Editor</strong> in your Supabase dashboard and run the script located at <code style="color: #ec4899; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px;">supabase/schema.sql</code>. This creates the tables, indexes, row-level security (RLS), and upvoting stored procedure.
-        </div>
-        <div>
-          <strong style="color: var(--gold-light);">Step 3:</strong> In Supabase <strong>Project Settings &gt; API</strong>, copy your:
-          <ul style="margin: 0.4rem 0 0.4rem 1.5rem;">
-            <li><strong>Project URL</strong></li>
-            <li><strong>anon public API key</strong></li>
-          </ul>
-        </div>
-        <div>
-          <strong style="color: var(--gold-light);">Step 4:</strong> Paste them into <code style="color: #ec4899; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px;">js/config.js</code> or set environment variables in your Vercel project deployment:
-          <ul style="margin: 0.4rem 0 0.4rem 1.5rem; font-family: monospace; font-size: 0.78rem;">
-            <li>VITE_SUPABASE_URL or window.__SUPABASE_ENV__.url</li>
-            <li>VITE_SUPABASE_ANON_KEY or window.__SUPABASE_ENV__.anonKey</li>
-          </ul>
-        </div>
-      </div>
-
-      <div style="margin-top: 1.5rem; text-align: center;">
-        <button type="button" onclick="document.getElementById('db-modal').classList.remove('is-active')" class="btn btn-secondary btn-sm">
-          Got It!
-        </button>
-      </div>
-    </div>
+  <div id="toast-notice" class="toast-notice" role="status" aria-live="polite">
+    <span id="toast-icon">✓</span>
+    <span id="toast-text">Action completed successfully</span>
   </div>
 
   <!-- ====================================================================
-       10. SITE FOOTER WITH CULTURAL TEAM BRANDING
+       11. SITE FOOTER WITH CULTURAL TEAM BRANDING
        ==================================================================== -->
   <footer class="site-footer">
     <div class="footer-inner">
@@ -589,6 +641,7 @@
             <li><a href="#suggestions-section">Submit Event Suggestion</a></li>
             <li><a href="#inspiration-section">30 Event Inspirations</a></li>
             <li><a href="#community-wall">The People Have Spoken</a></li>
+            <li><a href="#suggestion-management">Organizer Hub</a></li>
           </ul>
         </div>
 
@@ -598,13 +651,12 @@
             <li><a href="javascript:void(0)" data-open-qr>Display QR Code</a></li>
             <li><a href="javascript:void(0)" onclick="window.print()">Print Event Flyer</a></li>
             <li><a href="https://vercel.com" target="_blank" rel="noopener noreferrer">Hosted on Vercel</a></li>
-            <li><a href="https://supabase.com" target="_blank" rel="noopener noreferrer">Powered by Supabase</a></li>
           </ul>
         </div>
       </div>
 
       <div class="footer-bottom-bar">
-        <span>© 2026 Cultural Team. All Rights Reserved. Built with Bold Roman Typography &amp; Real Cloud Persistence.</span>
+        <span>© 2026 Cultural Team. Built with Bold Roman Typography &amp; Frontend Local Storage.</span>
         <span>College Arts &amp; Cultural Council</span>
       </div>
     </div>
@@ -614,7 +666,7 @@
   <script src="js/config.js"></script>
   <script src="js/suggestions-data.js"></script>
   <script src="js/qrcode.min.js"></script>
-  <script src="js/db.js"></script>
+  <script src="js/storage.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
