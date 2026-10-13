@@ -16,6 +16,9 @@
 
   // DOM Elements
   const header = document.getElementById('site-header');
+  const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+  const mobileNavDrawer = document.getElementById('mobile-nav-drawer');
+  const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
 
   // Suggestion Form Elements
   const suggestionForm = document.getElementById('suggestion-form');
@@ -88,6 +91,7 @@
     initScenic3DScroll();
     initParticlesCanvas();
     initHeaderScroll();
+    setupMobileNav();
     renderInspirationGrid();
     setupCategoryChipSelectors();
     setupCharCounters();
@@ -728,11 +732,76 @@
     const currentUrl = getShareableUrl();
     if (qrUrlDisplay) qrUrlDisplay.textContent = currentUrl;
 
-    if (qrContainer && typeof window.generateQRCodeSVG === 'function') {
-      qrContainer.innerHTML = window.generateQRCodeSVG(currentUrl, 220);
+    if (qrContainer) {
+      const customImgSrc = window.APP_CONFIG?.qrCodeImage || 'assets/qr-code.png';
+      const img = new Image();
+      img.onload = () => {
+        qrContainer.innerHTML = `<img src="${customImgSrc}" alt="Cultural Team Portal QR Code" class="qr-code-img" />`;
+      };
+      img.onerror = () => {
+        if (typeof window.generateQRCodeSVG === 'function') {
+          qrContainer.innerHTML = window.generateQRCodeSVG(currentUrl, 220);
+        }
+      };
+      img.src = customImgSrc;
     }
 
     qrModal?.classList.add('is-active');
+  }
+
+  // ============================================================================
+  // MOBILE NAVIGATION DRAWER
+  // ============================================================================
+  function setupMobileNav() {
+    if (!mobileNavToggle || !mobileNavDrawer) return;
+
+    function openMobileNav() {
+      mobileNavToggle.classList.add('is-active');
+      mobileNavToggle.setAttribute('aria-expanded', 'true');
+      mobileNavDrawer.classList.add('is-open');
+      mobileNavDrawer.removeAttribute('hidden');
+      mobileNavDrawer.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeMobileNav() {
+      mobileNavToggle.classList.remove('is-active');
+      mobileNavToggle.setAttribute('aria-expanded', 'false');
+      mobileNavDrawer.classList.remove('is-open');
+      mobileNavDrawer.setAttribute('aria-hidden', 'true');
+    }
+
+    mobileNavToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = mobileNavDrawer.classList.contains('is-open');
+      if (isOpen) {
+        closeMobileNav();
+      } else {
+        openMobileNav();
+      }
+    });
+
+    mobileNavLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        closeMobileNav();
+      });
+    });
+
+    const mobileDrawerCta = document.getElementById('mobile-drawer-cta');
+    mobileDrawerCta?.addEventListener('click', () => {
+      closeMobileNav();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (
+        mobileNavDrawer.classList.contains('is-open') &&
+        !mobileNavDrawer.contains(e.target) &&
+        !mobileNavToggle.contains(e.target)
+      ) {
+        closeMobileNav();
+      }
+    });
+
+    window.closeMobileNav = closeMobileNav;
   }
 
   // Animated Counter
@@ -781,6 +850,12 @@
     const canvas = document.getElementById('particles-canvas');
     if (!canvas) return;
 
+    // Accessibility: Respect prefers-reduced-motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      canvas.style.display = 'none';
+      return;
+    }
+
     const ctx = canvas.getContext('2d');
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
@@ -798,7 +873,7 @@
       'rgba(255, 251, 245, 0.8)'
     ];
 
-    const particleCount = window.innerWidth < 768 ? 22 : 42;
+    const particleCount = window.innerWidth < 768 ? 14 : 36;
     const particles = [];
 
     for (let i = 0; i < particleCount; i++) {
@@ -807,45 +882,54 @@
         y: Math.random() * height,
         radius: Math.random() * 2.2 + 0.8,
         color: colors[Math.floor(Math.random() * colors.length)],
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: -Math.random() * 0.7 - 0.2,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: -Math.random() * 0.6 - 0.2,
         alpha: Math.random() * 0.8 + 0.2
       });
     }
 
     let isVisible = true;
+    let animId = null;
+
     document.addEventListener('visibilitychange', () => {
       isVisible = !document.hidden;
+      if (isVisible && !animId) {
+        animId = requestAnimationFrame(animate);
+      }
     });
 
     function animate() {
-      if (isVisible) {
-        ctx.clearRect(0, 0, width, height);
-
-        for (let i = 0; i < particles.length; i++) {
-          const p = particles[i];
-          p.x += p.vx;
-          p.y += p.vy;
-
-          if (p.y < -10) {
-            p.y = height + 10;
-            p.x = Math.random() * width;
-          }
-          if (p.x < -10) p.x = width + 10;
-          if (p.x > width + 10) p.x = -10;
-
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.fillStyle = p.color;
-          ctx.shadowBlur = 8;
-          ctx.shadowColor = p.color;
-          ctx.fill();
-        }
+      if (!isVisible) {
+        animId = null;
+        return;
       }
-      requestAnimationFrame(animate);
+
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.y < -10) {
+          p.y = height + 10;
+          p.x = Math.random() * width;
+        }
+        if (p.x < -10) p.x = width + 10;
+        if (p.x > width + 10) p.x = -10;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = p.color;
+        ctx.fill();
+      }
+
+      animId = requestAnimationFrame(animate);
     }
 
-    requestAnimationFrame(animate);
+    animId = requestAnimationFrame(animate);
   }
 
   // ============================================================================
@@ -876,15 +960,27 @@
     let currentMouseY = 0;
     let isMouseActive = false;
 
+    let isVisible = true;
+    let isRunning = false;
+
+    function requestFrameIfNeeded() {
+      if (!isRunning && isVisible) {
+        isRunning = true;
+        requestAnimationFrame(renderScenic3D);
+      }
+    }
+
     // Track scroll target position and progress
     function updateScrollTarget() {
       targetScrollY = window.pageYOffset || document.documentElement.scrollTop;
       const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       targetProgress = Math.min(1, Math.max(0, targetScrollY / maxScroll));
+      requestFrameIfNeeded();
     }
 
     window.addEventListener('scroll', updateScrollTarget, { passive: true });
     window.addEventListener('resize', updateScrollTarget, { passive: true });
+    window.addEventListener('touchmove', updateScrollTarget, { passive: true });
     updateScrollTarget();
 
     // Track mouse position on fine pointers (desktop) for subtle holographic depth
@@ -895,17 +991,19 @@
         const halfH = window.innerHeight / 2;
         targetMouseX = Math.max(-1, Math.min(1, (e.clientX - halfW) / halfW));
         targetMouseY = Math.max(-1, Math.min(1, (e.clientY - halfH) / halfH));
+        requestFrameIfNeeded();
       }, { passive: true });
 
       window.addEventListener('mouseleave', () => {
         targetMouseX = 0;
         targetMouseY = 0;
+        requestFrameIfNeeded();
       }, { passive: true });
     }
 
-    let isVisible = true;
     document.addEventListener('visibilitychange', () => {
       isVisible = !document.hidden;
+      if (isVisible) requestFrameIfNeeded();
     });
 
     const isMobile = window.innerWidth < 768;
@@ -913,48 +1011,63 @@
     const ambientParallax = isMobile ? 0.05 : 0.08;
     const maxZoomDelta = isMobile ? 0.06 : 0.12;
 
-    // 60fps/120fps smooth physics loop via requestAnimationFrame
+    // 60fps/120fps smooth physics loop via requestAnimationFrame with idle pausing
     function renderScenic3D() {
-      if (isVisible) {
-        // Linear interpolation (lerp) damping for silky-smooth motion
-        currentScrollY += (targetScrollY - currentScrollY) * 0.085;
-        currentProgress += (targetProgress - currentProgress) * 0.085;
+      if (!isVisible) {
+        isRunning = false;
+        return;
+      }
 
-        if (isMouseActive) {
-          currentMouseX += (targetMouseX - currentMouseX) * 0.06;
-          currentMouseY += (targetMouseY - currentMouseY) * 0.06;
-        }
+      // Linear interpolation (lerp) damping for silky-smooth motion
+      currentScrollY += (targetScrollY - currentScrollY) * 0.085;
+      currentProgress += (targetProgress - currentProgress) * 0.085;
 
-        // Parallax translations
-        const mandalaY = -currentScrollY * parallaxFactor;
-        const ambientY = -currentScrollY * ambientParallax;
+      if (isMouseActive) {
+        currentMouseX += (targetMouseX - currentMouseX) * 0.06;
+        currentMouseY += (targetMouseY - currentMouseY) * 0.06;
+      }
 
-        // Cinematic 3D zoom & depth curve (expands gently during exploration)
-        const zoomScale = 1.04 + Math.sin(currentProgress * Math.PI) * maxZoomDelta;
-        const depthZ = -45 + Math.sin(currentProgress * Math.PI) * 40;
+      // Parallax translations
+      const mandalaY = -currentScrollY * parallaxFactor;
+      const ambientY = -currentScrollY * ambientParallax;
 
-        // Subtle perspective pitch & rotation
-        const pitchX = Math.sin(currentProgress * Math.PI * 2) * 2.2;
-        const rollZ = (currentProgress - 0.5) * 6.5;
+      // Cinematic 3D zoom & depth curve (expands gently during exploration)
+      const zoomScale = 1.04 + Math.sin(currentProgress * Math.PI) * maxZoomDelta;
+      const depthZ = -45 + Math.sin(currentProgress * Math.PI) * 40;
 
-        // Desktop holographic mouse tilt
-        const mouseTiltX = currentMouseX * 2.2;
-        const mouseTiltY = currentMouseY * 2.0;
+      // Subtle perspective pitch & rotation
+      const pitchX = Math.sin(currentProgress * Math.PI * 2) * 2.2;
+      const rollZ = (currentProgress - 0.5) * 6.5;
 
-        // Hardware-accelerated 3D transforms
-        stage.style.transform = `rotateY(${mouseTiltX.toFixed(3)}deg) rotateX(${(-mouseTiltY).toFixed(3)}deg)`;
+      // Desktop holographic mouse tilt
+      const mouseTiltX = currentMouseX * 2.2;
+      const mouseTiltY = currentMouseY * 2.0;
 
-        mandalaPlane.style.transform = `translate3d(0, ${mandalaY.toFixed(2)}px, ${depthZ.toFixed(2)}px) scale(${zoomScale.toFixed(4)}) rotateX(${pitchX.toFixed(3)}deg) rotateZ(${rollZ.toFixed(3)}deg)`;
+      // Hardware-accelerated 3D transforms
+      stage.style.transform = `rotateY(${mouseTiltX.toFixed(3)}deg) rotateX(${(-mouseTiltY).toFixed(3)}deg)`;
 
-        if (ambientPlane) {
-          ambientPlane.style.transform = `translate3d(0, ${ambientY.toFixed(2)}px, 35px)`;
-        }
+      mandalaPlane.style.transform = `translate3d(0, ${mandalaY.toFixed(2)}px, ${depthZ.toFixed(2)}px) scale(${zoomScale.toFixed(4)}) rotateX(${pitchX.toFixed(3)}deg) rotateZ(${rollZ.toFixed(3)}deg)`;
+
+      if (ambientPlane) {
+        ambientPlane.style.transform = `translate3d(0, ${ambientY.toFixed(2)}px, 35px)`;
+      }
+
+      // Conserve device resources when movement has settled
+      const scrollDelta = Math.abs(targetScrollY - currentScrollY);
+      const progressDelta = Math.abs(targetProgress - currentProgress);
+      const mouseDelta = Math.abs(targetMouseX - currentMouseX) + Math.abs(targetMouseY - currentMouseY);
+
+      if (scrollDelta < 0.08 && progressDelta < 0.0002 && (!isMouseActive || mouseDelta < 0.001)) {
+        currentScrollY = targetScrollY;
+        currentProgress = targetProgress;
+        isRunning = false;
+        return;
       }
 
       requestAnimationFrame(renderScenic3D);
     }
 
-    requestAnimationFrame(renderScenic3D);
+    requestFrameIfNeeded();
   }
 
   // ============================================================================

@@ -136,7 +136,7 @@
         <!-- QR Code Quick Trigger -->
         <button
           type="button"
-          class="btn btn-secondary btn-sm"
+          class="btn btn-secondary btn-sm btn-qr-trigger"
           data-open-qr
           aria-label="Display QR Code for Mobile Scanning"
         >
@@ -146,15 +146,57 @@
             <rect x="14" y="14" width="7" height="7"></rect>
             <rect x="3" y="14" width="7" height="7"></rect>
           </svg>
-          <span>QR Code</span>
+          <span class="btn-qr-label">QR Code</span>
         </button>
 
         <!-- CTA Button -->
-        <a href="#suggestions-section" class="btn btn-primary btn-sm">
+        <a href="#suggestions-section" class="btn btn-primary btn-sm header-cta-btn">
           <span>Share Ideas</span>
         </a>
+
+        <!-- Mobile Navigation Hamburger Toggle Button -->
+        <button
+          type="button"
+          id="mobile-nav-toggle"
+          class="mobile-nav-toggle"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
+          aria-controls="mobile-nav-drawer"
+        >
+          <span class="hamburger-line line-1"></span>
+          <span class="hamburger-line line-2"></span>
+          <span class="hamburger-line line-3"></span>
+        </button>
       </div>
     </div>
+
+    <!-- Mobile Navigation Drawer Dropdown -->
+    <nav id="mobile-nav-drawer" class="mobile-nav-drawer" aria-label="Mobile Navigation Menu" aria-hidden="true">
+      <div class="mobile-nav-inner">
+        <ul class="mobile-nav-list">
+          <li><a href="#hero" class="mobile-nav-link">🏛️ Home</a></li>
+          <li><a href="#mystery" class="mobile-nav-link">🎭 Mystery Teaser</a></li>
+          <li><a href="#suggestions-section" class="mobile-nav-link">✨ Suggest Event</a></li>
+          <li><a href="#inspiration-section" class="mobile-nav-link">💡 30 Ideas</a></li>
+          <li><a href="#community-wall" class="mobile-nav-link">🔥 Community Wall</a></li>
+          <li><a href="#suggestion-management" class="mobile-nav-link">⚙️ Organizer Hub</a></li>
+        </ul>
+        <div class="mobile-nav-footer">
+          <button type="button" class="btn btn-secondary mobile-drawer-btn" data-open-qr aria-label="Display QR Code">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Scan QR Code</span>
+          </button>
+          <a href="#suggestions-section" class="btn btn-primary mobile-drawer-btn" id="mobile-drawer-cta">
+            <span>Share Your Ideas</span>
+          </a>
+        </div>
+      </div>
+    </nav>
   </header>
 
   <!-- ====================================================================
@@ -380,6 +422,9 @@
               required
               maxlength="120"
               autocomplete="off"
+              enterkeyhint="next"
+              autocapitalize="sentences"
+              spellcheck="true"
             />
           </div>
 
@@ -423,6 +468,9 @@
               class="form-textarea"
               placeholder="Give us the scoop! What music, theme, artists, or special rules would make this event legendary?"
               maxlength="1000"
+              enterkeyhint="done"
+              autocapitalize="sentences"
+              spellcheck="true"
             ></textarea>
           </div>
 
@@ -725,7 +773,7 @@
         <div>
           <div class="brand-wrapper" style="margin-bottom: 1rem;">
             <div class="brand-logo-frame" style="width: 38px; height: 38px;">
-              <img src="assets/cultural-club-logo.jpg" alt="Logo" class="brand-logo-img" />
+              <img src="assets/cultural-club-logo.jpg" alt="Cultural Team Official Crest" class="brand-logo-img" width="38" height="38" loading="lazy" />
             </div>
             <div class="brand-text-block">
               <span class="brand-title" style="font-size: 1.05rem;">CULTURAL TEAM</span>
