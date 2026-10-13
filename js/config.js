@@ -1,15 +1,16 @@
 /**
- * CULTURAL TEAM — APPLICATION CONFIGURATION (FRONTEND ONLY)
- * 
- * Standalone static configuration without backend dependencies.
- * All suggestions and votes are managed via the browser's localStorage.
+ * CULTURAL TEAM — CONFIGURATION & SUPABASE INTEGRATION
  */
 
 const CONFIG = {
+  // Supabase Cloud Configuration
+  supabaseUrl: (typeof window !== "undefined" && window.__SUPABASE_ENV__?.url) || "https://mrdvxgcrdhnfaxradzoo.supabase.co",
+  supabaseKey: (typeof window !== "undefined" && window.__SUPABASE_ENV__?.key) || "sb_publishable_ttEcjraLqZg9y8qWKhan3w_kXPt4-i9",
+
   // Production Domain (used for QR code generation and sharing)
   productionUrl: "https://cultural-team.vercel.app",
 
-  // Cultural Team Brand Identity
+  // Brand Metadata
   brand: {
     name: "CULTURAL TEAM",
     heroHeadline: "SOMETHING AMAZING IS COMING SOON!!!!",
@@ -20,7 +21,7 @@ const CONFIG = {
     year: "2026"
   },
 
-  // Allowed Event Categories
+  // Allowed Categories
   categories: [
     "Cultural Events",
     "Music and Dance",
@@ -38,12 +39,8 @@ const CONFIG = {
     submissionCooldownSeconds: 5
   },
 
-  // Storage Keys for Browser Persistence
-  storage: {
-    suggestionsKey: "cultural_team_suggestions_v2",
-    voterTokenKey: "cultural_team_voter_id",
-    votedIdsKey: "cultural_team_voted_ids"
-  }
+  // Organizer Default Passcode
+  adminPasscode: "cultural2026"
 };
 
 if (typeof window !== "undefined") {

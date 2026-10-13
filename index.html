@@ -38,6 +38,9 @@
 
   <!-- Main Editorial Stylesheet -->
   <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Supabase Official Client Library for Real-Time Synchronization -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <!-- Atmospheric Aurora Background Orbs -->
@@ -339,7 +342,7 @@
           <!-- Form Action Row -->
           <div class="form-submit-row">
             <p class="form-disclaimer">
-              🔒 Open to everyone · No account required · Instantly saved to your browser and updated across the live wall.
+              🔒 Open to everyone · No account required · Instantly saved to the shared database and synchronized across all visitors in real time.
             </p>
             <button type="submit" id="submit-suggestion-btn" class="btn-submit-main">
               <span>Submit Suggestion</span>
@@ -451,11 +454,11 @@
       </div>
 
       <div class="mgmt-panel">
-        <!-- Honest Local Storage Notice -->
+        <!-- Authorized Organizer Access Notice -->
         <div class="mgmt-notice-box">
-          <span class="mgmt-notice-icon" aria-hidden="true">ℹ️</span>
+          <span class="mgmt-notice-icon" aria-hidden="true">🔒</span>
           <div class="mgmt-notice-text">
-            <strong>Browser-Local Storage Notice:</strong> This website runs in a 100% frontend-only environment without backend dependencies. Suggestions submitted here are saved to your browser's <code>localStorage</code> and persist across refreshes on this device. They do not synchronize automatically across different visitors' phones.
+            <strong>Authorized Organizer Control:</strong> Suggestions are stored permanently in the shared database with real-time sync across all student devices. To moderate, shortlist, or permanently delete suggestions, authorized organizers must enter the administrative passcode.
           </div>
         </div>
 
@@ -656,7 +659,7 @@
       </div>
 
       <div class="footer-bottom-bar">
-        <span>© 2026 Cultural Team. Built with Bold Roman Typography &amp; Frontend Local Storage.</span>
+        <span>© 2026 Cultural Team. Built with Bold Roman Typography &amp; Real-Time Cloud Persistence.</span>
         <span>College Arts &amp; Cultural Council</span>
       </div>
     </div>

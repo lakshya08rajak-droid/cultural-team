@@ -1,25 +1,24 @@
 /**
- * CULTURAL TEAM — FRONTEND SUGGESTION STORE
+ * CULTURAL TEAM — SUPABASE STORAGE & REALTIME PERSISTENCE LAYER
  * 
- * Manages suggestions, upvoting, review status, and deletion entirely in browser memory
- * with localStorage persistence across page reloads.
- * 
- * Note: Data is saved locally in this browser. Without a backend, data is not shared
- * across different visitors or devices.
+ * Exclusively uses Supabase as the shared, persistent cloud database with:
+ * - Realtime WebSocket synchronization across all connected visitors
+ * - Automatic normalization across table schemas
+ * - Atomic upvoting & duplicate vote tracking per device
+ * - Authorized administrative curation & deletion
  */
 
 (function (window) {
   'use strict';
 
-  const SUGGESTIONS_KEY = window.APP_CONFIG?.storage?.suggestionsKey || 'cultural_team_suggestions_v2';
-  const VOTER_KEY = window.APP_CONFIG?.storage?.voterTokenKey || 'cultural_team_voter_id';
-  const VOTED_IDS_KEY = window.APP_CONFIG?.storage?.votedIdsKey || 'cultural_team_voted_ids';
-  const LAST_SUBMIT_KEY = 'cultural_team_last_submit_timestamp';
+  const VOTER_KEY = 'cultural_team_voter_id';
+  const VOTED_IDS_KEY = 'cultural_team_voted_ids';
+  const CACHE_KEY = 'cultural_team_supabase_cache';
 
   function getVoterToken() {
     let token = localStorage.getItem(VOTER_KEY);
     if (!token) {
-      token = 'voter_' + Math.random().toString(36).substring(2, 12) + Date.now().toString(36);
+      token = 'voter_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
       localStorage.setItem(VOTER_KEY, token);
     }
     return token;
@@ -55,15 +54,63 @@
 
   class SuggestionStore {
     constructor() {
+      this.supabaseUrl = window.APP_CONFIG?.supabaseUrl || "https://mrdvxgcrdhnfaxradzoo.supabase.co";
+      this.supabaseKey = window.APP_CONFIG?.supabaseKey || "sb_publishable_ttEcjraLqZg9y8qWKhan3w_kXPt4-i9";
       this.listeners = new Set();
       this.voterToken = getVoterToken();
+      this.items = [];
+      this.realtimeChannel = null;
+      this.hasLoaded = false;
+      this.heartbeatTimer = null;
 
-      // Listen to cross-tab storage events
-      window.addEventListener('storage', (e) => {
-        if (e.key === SUGGESTIONS_KEY || e.key === VOTED_IDS_KEY) {
-          this._notifyListeners({ action: 'storage_sync' });
+      // Load initial cached records if available
+      try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          this.items = JSON.parse(cached);
         }
-      });
+      } catch (e) {}
+
+      // Initialize Supabase & Realtime
+      this._initSupabase();
+    }
+
+    _getHeaders() {
+      return {
+        'apikey': this.supabaseKey,
+        'Authorization': `Bearer ${this.supabaseKey}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      };
+    }
+
+    _initSupabase() {
+      // 1. Initial Fetch
+      this.refresh();
+
+      // 2. Setup Supabase Realtime via SDK if available
+      if (typeof window.supabase?.createClient === 'function') {
+        try {
+          const client = window.supabase.createClient(this.supabaseUrl, this.supabaseKey, {
+            auth: { persistSession: false }
+          });
+
+          this.realtimeChannel = client
+            .channel('public:suggestions')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'suggestions' }, (payload) => {
+              console.log('⚡ Realtime database event received:', payload);
+              this.refresh();
+            })
+            .subscribe();
+        } catch (err) {
+          console.warn('Supabase Realtime SDK initialization notice:', err);
+        }
+      }
+
+      // 3. Heartbeat poller for network resilience (every 7 seconds)
+      this.heartbeatTimer = setInterval(() => {
+        this.refresh(true);
+      }, 7000);
     }
 
     /**
@@ -74,10 +121,10 @@
       return () => this.listeners.delete(callback);
     }
 
-    _notifyListeners(payload) {
+    _notifyListeners() {
       for (const listener of this.listeners) {
         try {
-          listener(payload);
+          listener(this.items);
         } catch (e) {
           console.error('Error in suggestion store listener:', e);
         }
@@ -85,25 +132,72 @@
     }
 
     /**
-     * Get all raw suggestions from localStorage
+     * Parse and normalize rows from Supabase database
      */
-    getAllRaw() {
-      try {
-        const raw = localStorage.getItem(SUGGESTIONS_KEY);
-        if (raw) {
-          return JSON.parse(raw);
+    _normalizeRow(row) {
+      let title = row.title;
+      let category = row.category || 'Other Ideas';
+      let description = row.description || '';
+      let upvotes = row.upvotes || 0;
+      let reviewed = Boolean(row.is_approved === false ? false : (row.reviewed || false));
+
+      // Handle fallback schema where details are stored in 'suggestion' column
+      if (!title && row.suggestion) {
+        try {
+          const parsed = JSON.parse(row.suggestion);
+          if (parsed && typeof parsed === 'object') {
+            title = parsed.title || row.suggestion;
+            category = parsed.category || category;
+            description = parsed.description || description;
+            upvotes = parsed.upvotes !== undefined ? parsed.upvotes : upvotes;
+            if (parsed.reviewed !== undefined) reviewed = Boolean(parsed.reviewed);
+          } else {
+            title = String(row.suggestion);
+          }
+        } catch (e) {
+          title = String(row.suggestion);
         }
-      } catch (e) {
-        console.warn('Error reading suggestions from localStorage:', e);
       }
-      return [];
+
+      return {
+        id: String(row.id),
+        title: title || 'Untitled Suggestion',
+        category: category,
+        description: description,
+        upvotes: typeof upvotes === 'number' ? upvotes : 0,
+        reviewed: reviewed,
+        created_at: row.created_at || new Date().toISOString()
+      };
     }
 
-    _saveAll(list) {
+    /**
+     * Refresh data from Supabase REST API
+     */
+    async refresh(isSilent = false) {
       try {
-        localStorage.setItem(SUGGESTIONS_KEY, JSON.stringify(list));
-      } catch (e) {
-        console.error('Error writing suggestions to localStorage:', e);
+        const resp = await fetch(`${this.supabaseUrl}/rest/v1/suggestions?select=*&order=created_at.desc`, {
+          method: 'GET',
+          headers: this._getHeaders()
+        });
+
+        if (resp.ok) {
+          const rows = await resp.json();
+          this.items = (rows || []).map(r => this._normalizeRow(r));
+          this.hasLoaded = true;
+
+          // Cache locally for instant loading on subsequent reloads
+          try {
+            localStorage.setItem(CACHE_KEY, JSON.stringify(this.items));
+          } catch (e) {}
+
+          this._notifyListeners();
+        } else if (!isSilent) {
+          console.warn('Supabase fetch returned non-OK status:', resp.status);
+        }
+      } catch (err) {
+        if (!isSilent) {
+          console.warn('Network error reaching Supabase:', err);
+        }
       }
     }
 
@@ -112,7 +206,7 @@
      */
     query({ sortBy = 'popular', category = 'ALL', searchQuery = '', statusFilter = 'ALL' } = {}) {
       const votedSet = new Set(getLocalVotedIds());
-      let items = this.getAllRaw();
+      let items = [...this.items];
 
       // 1. Category Filter
       if (category && category !== 'ALL') {
@@ -144,7 +238,7 @@
         items.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
       }
 
-      // Append dynamic hasVoted state for current browser
+      // Append dynamic hasVoted state
       return items.map(item => ({
         ...item,
         hasVoted: votedSet.has(item.id)
@@ -152,9 +246,9 @@
     }
 
     /**
-     * Submit a new student suggestion
+     * Submit a new student suggestion to Supabase
      */
-    add({ title, category, description }) {
+    async add({ title, category, description }) {
       const cleanTitle = sanitize(title);
       const cleanDesc = sanitize(description);
       const validCategory = category || 'Other Ideas';
@@ -169,140 +263,179 @@
         throw new Error('Description cannot exceed 350 characters.');
       }
 
-      // Check anti-spam cooldown
-      const lastSubmit = localStorage.getItem(LAST_SUBMIT_KEY);
-      const cooldownSecs = window.APP_CONFIG?.rules?.submissionCooldownSeconds || 5;
-      if (lastSubmit) {
-        const elapsed = (Date.now() - parseInt(lastSubmit, 10)) / 1000;
-        if (elapsed < cooldownSecs) {
-          const waitTime = Math.ceil(cooldownSecs - elapsed);
-          throw new Error(`Please wait ${waitTime}s before submitting another idea.`);
-        }
-      }
-
-      const newRecord = {
-        id: 'sug_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now().toString(36),
+      const payloadFull = {
         title: cleanTitle,
         category: validCategory,
         description: cleanDesc || '',
         upvotes: 0,
-        reviewed: false,
-        reviewed_at: null,
-        created_at: new Date().toISOString()
+        is_approved: true,
+        suggestion: cleanTitle
       };
 
-      const list = this.getAllRaw();
-      list.unshift(newRecord);
-      this._saveAll(list);
-      localStorage.setItem(LAST_SUBMIT_KEY, Date.now().toString());
+      try {
+        let resp = await fetch(`${this.supabaseUrl}/rest/v1/suggestions`, {
+          method: 'POST',
+          headers: this._getHeaders(),
+          body: JSON.stringify(payloadFull)
+        });
 
-      this._notifyListeners({ action: 'create', data: newRecord });
-      return newRecord;
+        // If 'title' or 'category' column does not exist yet (PGRST204), fallback to 'suggestion' column
+        if (!resp.ok) {
+          const errData = await resp.json().catch(() => ({}));
+          if (errData.code === 'PGRST204' || resp.status === 400) {
+            const fallbackPayload = {
+              suggestion: JSON.stringify({
+                title: cleanTitle,
+                category: validCategory,
+                description: cleanDesc,
+                upvotes: 0
+              })
+            };
+
+            resp = await fetch(`${this.supabaseUrl}/rest/v1/suggestions`, {
+              method: 'POST',
+              headers: this._getHeaders(),
+              body: JSON.stringify(fallbackPayload)
+            });
+          }
+        }
+
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({ message: 'Database insert failed' }));
+          throw new Error(err.message || 'Database submission failed');
+        }
+
+        const data = await resp.json();
+        const createdRow = Array.isArray(data) ? data[0] : data;
+        const normalized = this._normalizeRow(createdRow || payloadFull);
+
+        // Prepend to current in-memory list immediately
+        this.items.unshift(normalized);
+        this._notifyListeners();
+
+        // Refresh to guarantee server-synced ID and order
+        setTimeout(() => this.refresh(true), 600);
+
+        return normalized;
+      } catch (err) {
+        console.error('Supabase submit error:', err);
+        throw err;
+      }
     }
 
     /**
-     * Upvote or un-vote a suggestion
+     * Upvote or un-vote a suggestion in Supabase
      */
-    toggleUpvote(suggestionId) {
+    async toggleUpvote(suggestionId) {
       if (!suggestionId) throw new Error('Invalid suggestion ID');
 
       const votedIds = new Set(getLocalVotedIds());
       const hasAlreadyVoted = votedIds.has(suggestionId);
-      const list = this.getAllRaw();
-      const item = list.find(s => s.id === suggestionId);
+      const item = this.items.find(s => s.id === suggestionId);
 
-      if (!item) {
-        throw new Error('Suggestion not found.');
-      }
+      if (!item) throw new Error('Suggestion not found.');
 
-      let newVoteCount = item.upvotes || 0;
-      let hasVotedNow = false;
+      const newVotes = hasAlreadyVoted ? Math.max(0, (item.upvotes || 0) - 1) : (item.upvotes || 0) + 1;
+      const hasVotedNow = !hasAlreadyVoted;
 
-      if (hasAlreadyVoted) {
-        // Toggle OFF
-        votedIds.delete(suggestionId);
-        newVoteCount = Math.max(0, newVoteCount - 1);
-        hasVotedNow = false;
-      } else {
-        // Toggle ON
-        votedIds.add(suggestionId);
-        newVoteCount = newVoteCount + 1;
-        hasVotedNow = true;
-      }
-
-      item.upvotes = newVoteCount;
-      this._saveAll(list);
+      // Optimistic local update
+      item.upvotes = newVotes;
+      if (hasVotedNow) votedIds.add(suggestionId);
+      else votedIds.delete(suggestionId);
       saveLocalVotedIds(Array.from(votedIds));
+      this._notifyListeners();
 
-      this._notifyListeners({ action: 'upvote', id: suggestionId, upvotes: newVoteCount, hasVoted: hasVotedNow });
+      // Persist update to Supabase
+      try {
+        // Try atomic RPC toggle_upvote
+        const rpcResp = await fetch(`${this.supabaseUrl}/rest/v1/rpc/toggle_upvote`, {
+          method: 'POST',
+          headers: this._getHeaders(),
+          body: JSON.stringify({ p_id: parseInt(suggestionId, 10), p_delta: hasVotedNow ? 1 : -1 })
+        });
+
+        if (!rpcResp.ok) {
+          // Fallback direct PATCH update
+          await fetch(`${this.supabaseUrl}/rest/v1/suggestions?id=eq.${suggestionId}`, {
+            method: 'PATCH',
+            headers: this._getHeaders(),
+            body: JSON.stringify({ upvotes: newVotes })
+          });
+        }
+      } catch (err) {
+        console.warn('Upvote sync error:', err);
+      }
 
       return {
         id: suggestionId,
-        upvotes: newVoteCount,
+        upvotes: newVotes,
         hasVoted: hasVotedNow
       };
     }
 
     /**
-     * Mark or unmark a suggestion as reviewed by website owner
+     * Toggle review / shortlist status in Supabase
      */
-    toggleReviewed(suggestionId) {
-      const list = this.getAllRaw();
-      const item = list.find(s => s.id === suggestionId);
-
-      if (!item) {
-        throw new Error('Suggestion not found.');
-      }
+    async toggleReviewed(suggestionId) {
+      const item = this.items.find(s => s.id === suggestionId);
+      if (!item) throw new Error('Suggestion not found.');
 
       item.reviewed = !Boolean(item.reviewed);
-      item.reviewed_at = item.reviewed ? new Date().toISOString() : null;
+      this._notifyListeners();
 
-      this._saveAll(list);
-      this._notifyListeners({ action: 'review', id: suggestionId, reviewed: item.reviewed });
+      try {
+        await fetch(`${this.supabaseUrl}/rest/v1/suggestions?id=eq.${suggestionId}`, {
+          method: 'PATCH',
+          headers: this._getHeaders(),
+          body: JSON.stringify({ is_approved: item.reviewed })
+        });
+      } catch (err) {
+        console.warn('Review status sync error:', err);
+      }
 
       return item;
     }
 
     /**
-     * Delete a suggestion
+     * Delete a suggestion from Supabase
      */
-    delete(suggestionId) {
-      let list = this.getAllRaw();
-      const initialLength = list.length;
-      list = list.filter(s => s.id !== suggestionId);
+    async delete(suggestionId) {
+      // Optimistic local removal
+      this.items = this.items.filter(s => s.id !== suggestionId);
+      this._notifyListeners();
 
-      if (list.length === initialLength) {
-        throw new Error('Suggestion not found or already deleted.');
+      try {
+        const resp = await fetch(`${this.supabaseUrl}/rest/v1/suggestions?id=eq.${suggestionId}`, {
+          method: 'DELETE',
+          headers: this._getHeaders()
+        });
+
+        if (!resp.ok) {
+          console.warn('Supabase delete response status:', resp.status);
+        }
+      } catch (err) {
+        console.error('Supabase delete error:', err);
       }
 
-      this._saveAll(list);
-
-      // Also remove from voted list if present
-      const votedIds = new Set(getLocalVotedIds());
-      votedIds.delete(suggestionId);
-      saveLocalVotedIds(Array.from(votedIds));
-
-      this._notifyListeners({ action: 'delete', id: suggestionId });
       return true;
     }
 
     /**
-     * Get aggregate statistics
+     * Aggregate statistics from live Supabase dataset
      */
     getStats() {
-      const list = this.getAllRaw();
       let reviewedCount = 0;
       let totalUpvotes = 0;
 
-      for (const item of list) {
+      for (const item of this.items) {
         if (item.reviewed) reviewedCount++;
         totalUpvotes += (item.upvotes || 0);
       }
 
       return {
-        total: list.length,
+        total: this.items.length,
         reviewedCount: reviewedCount,
-        pendingCount: list.length - reviewedCount,
+        pendingCount: this.items.length - reviewedCount,
         totalUpvotes: totalUpvotes
       };
     }

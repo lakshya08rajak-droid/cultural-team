@@ -231,7 +231,7 @@
   function setupFormSubmission() {
     if (!suggestionForm) return;
 
-    suggestionForm.addEventListener('submit', (e) => {
+    suggestionForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       hideFormAlert();
 
@@ -251,8 +251,10 @@
         return;
       }
 
+      setSubmitLoading(true);
+
       try {
-        const newRecord = window.SuggestionStore.add({
+        const newRecord = await window.SuggestionStore.add({
           title,
           category,
           description
@@ -260,7 +262,7 @@
 
         // SUCCESS: Show popup modal
         openSuccessModal(newRecord.title, newRecord.category);
-        showToast('Idea submitted and added to the community wall!', 'success');
+        showToast('Idea submitted and synced to community wall!', 'success');
 
         // Reset form
         suggestionForm.reset();
@@ -272,8 +274,33 @@
         updateCharCounts();
       } catch (err) {
         showFormAlert(err.message || 'Submission could not be completed. Please try again.');
+      } finally {
+        setSubmitLoading(false);
       }
     });
+  }
+
+  function setSubmitLoading(isLoading) {
+    if (!submitBtn) return;
+    if (isLoading) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <svg class="spinner" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+          <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
+        </svg>
+        <span>Saving to Cloud...</span>
+      `;
+    } else {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `
+        <span>Submit Suggestion</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      `;
+    }
   }
 
   function showFormAlert(msg) {
@@ -347,10 +374,10 @@
 
     // Upvote Button Click Handlers
     communityWallGrid.querySelectorAll('.btn-upvote').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const id = btn.getAttribute('data-id');
         try {
-          const res = window.SuggestionStore.toggleUpvote(id);
+          const res = await window.SuggestionStore.toggleUpvote(id);
           showToast(res.hasVoted ? 'Upvote recorded!' : 'Upvote removed', 'success');
         } catch (err) {
           console.warn('Vote failed:', err);
@@ -437,7 +464,7 @@
           <div class="mgmt-card-meta">
             <span class="badge-category">${escapeHTML(item.category)}</span>
             <span class="badge-status ${item.reviewed ? 'reviewed' : 'pending'}">
-              ${item.reviewed ? '✓ Reviewed / Shortlisted' : '⏳ Pending Review'}
+              ${item.reviewed ? '✓ Shortlisted' : '⏳ Pending Review'}
             </span>
             <span class="community-date">Submitted ${formatRelativeTime(item.created_at)}</span>
           </div>
@@ -452,7 +479,7 @@
         </div>
 
         <div class="mgmt-card-footer">
-          <span class="community-date" style="font-family: monospace;">ID: ${item.id.substring(0, 14)}...</span>
+          <span class="community-date" style="font-family: monospace;">ID: #${item.id}</span>
           <div class="mgmt-actions-group">
             <button 
               type="button" 
@@ -460,7 +487,7 @@
               data-id="${item.id}"
               aria-label="${item.reviewed ? 'Unmark review' : 'Mark as reviewed'} for ${escapeAttr(item.title)}"
             >
-              ${item.reviewed ? '↩️ Unmark Review' : '✓ Mark as Reviewed'}
+              ${item.reviewed ? '↩️ Revert Shortlist' : '✓ Shortlist Idea'}
             </button>
             <button 
               type="button" 
@@ -478,12 +505,12 @@
 
     // Attach Review Toggle Button Listeners
     mgmtGrid.querySelectorAll('.btn-review-toggle').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const id = btn.getAttribute('data-id');
         try {
-          const updated = window.SuggestionStore.toggleReviewed(id);
+          const updated = await window.SuggestionStore.toggleReviewed(id);
           showToast(
-            updated.reviewed ? 'Suggestion marked as reviewed!' : 'Review status reverted to pending',
+            updated.reviewed ? 'Suggestion shortlisted!' : 'Review status reverted to pending',
             'success'
           );
         } catch (e) {
@@ -492,18 +519,23 @@
       });
     });
 
-    // Attach Delete Button Listeners
+    // Attach Delete Button Listeners (Protected by Organizer Passcode)
     mgmtGrid.querySelectorAll('.btn-delete-card').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const id = btn.getAttribute('data-id');
         const title = btn.getAttribute('data-title');
-        if (confirm(`Are you sure you want to delete "${title}"? This will remove it from your browser's local storage.`)) {
+        const pass = prompt(`Authorized Action: Enter Organizer Passcode to delete "${title}":`, '');
+        if (pass === null) return;
+        const validPass = window.APP_CONFIG?.adminPasscode || 'cultural2026';
+        if (pass.trim() === validPass) {
           try {
-            window.SuggestionStore.delete(id);
-            showToast(`"${title}" deleted successfully`, 'danger');
+            await window.SuggestionStore.delete(id);
+            showToast(`"${title}" removed from database`, 'danger');
           } catch (e) {
-            console.warn('Delete error:', e);
+            showToast('Delete operation failed: ' + e.message, 'danger');
           }
+        } else {
+          showToast('Unauthorized: Incorrect organizer passcode', 'danger');
         }
       });
     });
