@@ -696,12 +696,7 @@
   });
 
   function getShareableUrl() {
-    if (window.location.protocol.startsWith('http') && 
-        !window.location.hostname.includes('localhost') && 
-        !window.location.hostname.includes('127.0.0.1')) {
-      return window.location.href.split('#')[0];
-    }
-    return window.APP_CONFIG?.productionUrl || 'https://cultural-team.vercel.app';
+    return window.APP_CONFIG?.productionUrl || 'https://cultural-team-git-main-culturalteam.vercel.app';
   }
 
   // QR Code Modal
@@ -729,21 +724,22 @@
   }
 
   function openQRModal() {
-    const currentUrl = getShareableUrl();
-    if (qrUrlDisplay) qrUrlDisplay.textContent = currentUrl;
+    const targetUrl = getShareableUrl();
+    if (qrUrlDisplay) qrUrlDisplay.textContent = targetUrl;
 
     if (qrContainer) {
-      const customImgSrc = window.APP_CONFIG?.qrCodeImage || 'assets/qr-code.png';
-      const img = new Image();
-      img.onload = () => {
-        qrContainer.innerHTML = `<img src="${customImgSrc}" alt="Cultural Team Portal QR Code" class="qr-code-img" />`;
-      };
-      img.onerror = () => {
-        if (typeof window.generateQRCodeSVG === 'function') {
-          qrContainer.innerHTML = window.generateQRCodeSVG(currentUrl, 220);
-        }
-      };
-      img.src = customImgSrc;
+      const qrImageSrc = window.APP_CONFIG?.qrCodeImage || 'assets/cultural-qr-code.jpg';
+      qrContainer.innerHTML = `
+        <img 
+          src="${qrImageSrc}" 
+          alt="QR Code — Scan to Share Your Suggestions" 
+          class="qr-code-img" 
+          width="918" 
+          height="918" 
+          loading="eager" 
+          decoding="async"
+        />
+      `;
     }
 
     qrModal?.classList.add('is-active');

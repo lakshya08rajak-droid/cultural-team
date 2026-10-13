@@ -2013,9 +2013,31 @@ body {
 }
 
 /* QR Code Modal Styles */
+.qr-modal-container {
+  max-width: min(92vw, 460px);
+  padding: 2.25rem 1.75rem;
+}
+
+.qr-modal-heading {
+  font-size: clamp(1.2rem, 3.2vw, 1.45rem);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.65rem;
+  color: #fffbf5;
+}
+
+.qr-instructions {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-bottom: 1.25rem;
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .qr-display-box {
   background: #ffffff;
-  padding: 1rem;
+  padding: 1.25rem;
   border-radius: var(--radius-md);
   display: inline-flex;
   align-items: center;
@@ -2023,24 +2045,20 @@ body {
   margin: 1.25rem auto;
   max-width: 100%;
   box-sizing: border-box;
-  box-shadow: 0 0 30px rgba(232, 216, 196, 0.2);
+  box-shadow: 0 0 35px rgba(232, 216, 196, 0.28), 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(232, 216, 196, 0.4);
 }
 
-.qr-display-box svg,
-.qr-display-box img {
+.qr-display-box img,
+.qr-code-img {
   display: block;
   max-width: 100%;
-  width: min(220px, 56vw);
+  width: min(260px, 62vw);
   height: auto;
   aspect-ratio: 1 / 1;
   object-fit: contain;
-}
-
-.qr-instructions {
-  font-size: 0.88rem;
-  color: var(--text-secondary);
-  line-height: 1.55;
-  margin-bottom: 1.25rem;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 .qr-url-pill {

@@ -7,8 +7,9 @@ const CONFIG = {
   supabaseUrl: (typeof window !== "undefined" && window.__SUPABASE_ENV__?.url) || "https://mrdvxgcrdhnfaxradzoo.supabase.co",
   supabaseKey: (typeof window !== "undefined" && window.__SUPABASE_ENV__?.key) || "sb_publishable_ttEcjraLqZg9y8qWKhan3w_kXPt4-i9",
 
-  // Production Domain (used for QR code generation and sharing)
-  productionUrl: "https://cultural-team.vercel.app",
+  // Production Domain (used for QR code encoding and sharing)
+  productionUrl: "https://cultural-team-git-main-culturalteam.vercel.app",
+  qrCodeImage: "assets/cultural-qr-code.jpg",
 
   // Brand Metadata
   brand: {

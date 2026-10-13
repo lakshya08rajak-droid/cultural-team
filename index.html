@@ -724,25 +724,33 @@
        9. QR CODE PUBLIC ACCESS MODAL
        ==================================================================== -->
   <div id="qr-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title">
-    <div class="modal-container">
+    <div class="modal-container qr-modal-container">
       <button type="button" id="qr-modal-close" class="modal-close-btn" aria-label="Close modal">×</button>
 
-      <h3 id="qr-modal-title" class="success-title-roman">
-        SCAN &amp; SHARE ON MOBILE
+      <h3 id="qr-modal-title" class="success-title-roman qr-modal-heading">
+        Scan to Share Your Suggestions
       </h3>
 
       <p class="qr-instructions">
-        Scan this QR code with any smartphone camera to open the Cultural Team suggestion portal instantly — no app or login required.
+        Scan this QR code with your phone camera to open the Cultural Team website and share your suggestions.
       </p>
 
       <div class="qr-display-box">
         <div id="qr-code-canvas-container">
-          <!-- Dynamic High-Res SVG QR Code will be rendered here -->
+          <img
+            src="assets/cultural-qr-code.jpg"
+            alt="QR Code — Scan to Share Your Suggestions"
+            class="qr-code-img"
+            width="918"
+            height="918"
+            loading="eager"
+            decoding="async"
+          />
         </div>
       </div>
 
       <div id="qr-url-display" class="qr-url-pill">
-        https://cultural-team.vercel.app
+        https://cultural-team-git-main-culturalteam.vercel.app
       </div>
 
       <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
