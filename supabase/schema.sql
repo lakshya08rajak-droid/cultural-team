@@ -1,8 +1,7 @@
 -- ==============================================================================
 -- CULTURAL TEAM — HARDENED POSTGRESQL RLS & SECURITY POLICIES
 -- ==============================================================================
--- Instructions: Copy and paste this entire script into your Supabase SQL Editor.
--- It is safe to rerun multiple times and will not overwrite or delete existing data.
+-- Safe to run and rerun. Preserves all existing suggestions and timestamps.
 -- ==============================================================================
 
 -- 1. Ensure public.suggestions table exists
@@ -32,28 +31,21 @@ CREATE INDEX IF NOT EXISTS idx_suggestions_created_at ON public.suggestions(crea
 CREATE INDEX IF NOT EXISTS idx_suggestions_upvotes ON public.suggestions(upvotes DESC);
 
 -- 3. Database Constraints (<= 1,000 characters)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_suggestions_title_length') THEN
-    ALTER TABLE public.suggestions ADD CONSTRAINT chk_suggestions_title_length 
-      CHECK (title IS NULL OR (char_length(trim(title)) >= 2 AND char_length(title) <= 120));
-  END IF;
+ALTER TABLE public.suggestions DROP CONSTRAINT IF EXISTS chk_suggestions_title_length;
+ALTER TABLE public.suggestions ADD CONSTRAINT chk_suggestions_title_length 
+  CHECK (title IS NULL OR (char_length(trim(title)) >= 2 AND char_length(title) <= 120));
 
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_suggestions_desc_length') THEN
-    ALTER TABLE public.suggestions ADD CONSTRAINT chk_suggestions_desc_length 
-      CHECK (description IS NULL OR char_length(description) <= 1000);
-  END IF;
+ALTER TABLE public.suggestions DROP CONSTRAINT IF EXISTS chk_suggestions_desc_length;
+ALTER TABLE public.suggestions ADD CONSTRAINT chk_suggestions_desc_length 
+  CHECK (description IS NULL OR char_length(description) <= 1000);
 
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_suggestions_raw_length') THEN
-    ALTER TABLE public.suggestions ADD CONSTRAINT chk_suggestions_raw_length 
-      CHECK (suggestion IS NULL OR (char_length(trim(suggestion)) >= 2 AND char_length(suggestion) <= 1000));
-  END IF;
+ALTER TABLE public.suggestions DROP CONSTRAINT IF EXISTS chk_suggestions_raw_length;
+ALTER TABLE public.suggestions ADD CONSTRAINT chk_suggestions_raw_length 
+  CHECK (suggestion IS NULL OR (char_length(trim(suggestion)) >= 2 AND char_length(suggestion) <= 1000));
 
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_suggestions_upvotes_non_neg') THEN
-    ALTER TABLE public.suggestions ADD CONSTRAINT chk_suggestions_upvotes_non_neg 
-      CHECK (upvotes >= 0);
-  END IF;
-END $$;
+ALTER TABLE public.suggestions DROP CONSTRAINT IF EXISTS chk_suggestions_upvotes_non_neg;
+ALTER TABLE public.suggestions ADD CONSTRAINT chk_suggestions_upvotes_non_neg 
+  CHECK (upvotes >= 0);
 
 -- 4. Enable Row Level Security (RLS)
 ALTER TABLE public.suggestions ENABLE ROW LEVEL SECURITY;
@@ -105,7 +97,7 @@ CREATE TABLE IF NOT EXISTS public.suggestion_votes (
 CREATE INDEX IF NOT EXISTS idx_suggestion_votes_voter ON public.suggestion_votes(voter_token);
 
 ALTER TABLE public.suggestion_votes ENABLE ROW LEVEL SECURITY;
-REVOKE ALL ON TABLE public.suggestion_votes FROM anon, authenticated, public;
+REVOKE ALL ON TABLE public.suggestion_votes FROM anon, authenticated;
 GRANT SELECT, INSERT, DELETE ON TABLE public.suggestion_votes TO service_role;
 
 -- 6. Atomic Upvote Function
@@ -129,7 +121,7 @@ BEGIN
   END IF;
 
   v_clean_token := trim(p_voter_token);
-  IF v_clean_token IS NULL OR v_clean_token !~ '^voter_[a-zA-Z0-9_\-]{8,80}$' THEN
+  IF v_clean_token IS NULL OR v_clean_token !~ '^voter_[a-zA-Z0-9_]{8,80}$' THEN
     RAISE EXCEPTION 'Invalid voter token format.';
   END IF;
 
@@ -144,7 +136,7 @@ BEGIN
     SELECT 1 FROM public.suggestion_votes 
     WHERE suggestion_id = p_id AND voter_token = v_clean_token
   ) THEN
-    -- UN-VOTE
+    -- Remove existing vote (un-vote)
     DELETE FROM public.suggestion_votes 
     WHERE suggestion_id = p_id AND voter_token = v_clean_token;
 
@@ -155,7 +147,7 @@ BEGIN
 
     v_has_voted := false;
   ELSE
-    -- Rate check: max 50 active votes per device across platform
+    -- Rate limit check: max 50 active votes per device across platform
     SELECT count(*) INTO v_active_votes_count
     FROM public.suggestion_votes
     WHERE voter_token = v_clean_token;
@@ -164,7 +156,7 @@ BEGIN
       RAISE EXCEPTION 'Voting limit reached for this device.';
     END IF;
 
-    -- UPVOTE
+    -- Add unique vote
     INSERT INTO public.suggestion_votes (suggestion_id, voter_token)
     VALUES (p_id, v_clean_token)
     ON CONFLICT (suggestion_id, voter_token) DO NOTHING;
@@ -186,7 +178,7 @@ END;
 $$;
 
 REVOKE ALL ON FUNCTION public.toggle_upvote(BIGINT, TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.toggle_upvote(BIGINT, TEXT) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.toggle_upvote(BIGINT, TEXT) TO anon, authenticated, service_role;
 
 -- 7. Organizer Moderation RPCs
 DROP FUNCTION IF EXISTS public.admin_delete_suggestion(BIGINT, TEXT);
@@ -207,7 +199,7 @@ END;
 $$;
 
 REVOKE ALL ON FUNCTION public.admin_delete_suggestion(BIGINT, TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.admin_delete_suggestion(BIGINT, TEXT) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_delete_suggestion(BIGINT, TEXT) TO anon, authenticated, service_role;
 
 DROP FUNCTION IF EXISTS public.admin_toggle_reviewed(BIGINT, TEXT);
 CREATE OR REPLACE FUNCTION public.admin_toggle_reviewed(p_id BIGINT, p_passcode TEXT)
@@ -233,21 +225,21 @@ END;
 $$;
 
 REVOKE ALL ON FUNCTION public.admin_toggle_reviewed(BIGINT, TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.admin_toggle_reviewed(BIGINT, TEXT) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_toggle_reviewed(BIGINT, TEXT) TO anon, authenticated, service_role;
 
 -- 8. Enable Realtime Publication
 DO $$
 BEGIN
-  IF EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
-    IF NOT EXISTS (
-      SELECT 1 FROM pg_publication_tables 
-      WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'suggestions'
-    ) THEN
-      BEGIN
-        EXECUTE 'ALTER PUBLICATION supabase_realtime ADD TABLE public.suggestions';
-      EXCEPTION
-        WHEN OTHERS THEN NULL;
-      END;
-    END IF;
-  END IF;
+  BEGIN
+    EXECUTE 'ALTER PUBLICATION supabase_realtime ADD TABLE public.suggestions';
+  EXCEPTION
+    WHEN duplicate_object THEN
+      NULL;
+    WHEN undefined_object THEN
+      NULL;
+    WHEN insufficient_privilege THEN
+      NULL;
+    WHEN OTHERS THEN
+      NULL;
+  END;
 END $$;

@@ -91,7 +91,7 @@ echo "[PASS] 8. All 30 inspiration suggestions present and verified."
 grep -q "CREATE TABLE IF NOT EXISTS public.suggestion_votes" supabase/schema.sql
 grep -q "toggle_upvote(p_id BIGINT, p_voter_token TEXT)" supabase/schema.sql
 grep -q "v_clean_token !~" supabase/schema.sql
-grep -q "REVOKE ALL ON TABLE public.suggestion_votes FROM anon, authenticated, public;" supabase/schema.sql
+grep -q "REVOKE ALL ON TABLE public.suggestion_votes FROM anon, authenticated;" supabase/schema.sql
 echo "[PASS] 9. Anti-abuse upvoting verified: Unique device tracking & input validation."
 
 # 10. Verify Passcode-Protected Admin Functions
