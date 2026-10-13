@@ -33,16 +33,16 @@
    - Category filtering & search.
    - **Click-to-Prefill**: Tapping "Suggest This Idea" instantly scrolls up and prefills the title & category for the student.
 
-5. **Persistent Cloud Database & Public Suggestion Wall ("THE PEOPLE HAVE SPOKEN")**
+5. **Anti-Abuse Device-Bound Upvoting Wall ("THE PEOPLE HAVE SPOKEN")**
    - Live counter tracking `COMMUNITY IDEAS: [REAL DATABASE COUNT]`.
    - Connected to **Supabase** via WebSockets Realtime and REST API.
-   - Upvoting system with persistent vote tracking in localStorage to prevent duplicate votes per device.
+   - Database-level vote uniqueness tracked in `public.suggestion_votes` by voter token to prevent vote stuffing or script inflation.
    - Sorting: Most Popular (highest votes), Newest First, Oldest First.
    - Visual badges for ideas shortlisted / reviewed by the Cultural Team.
 
 6. **Dedicated Suggestions Management Hub ("ORGANIZER CONTROL PANEL")**
-   - Organizer section within the website to view, search, review, and delete submitted ideas from the Supabase database.
-   - **Passcode Protected**: Actions like permanent deletion are protected by the administrative passcode (`cultural2026`) so casual visitors cannot accidentally delete students' suggestions.
+   - Organizer section within the website to view, search, review, and delete submitted ideas.
+   - **Passcode Protected**: Actions like permanent deletion and shortlisting are protected by the administrative passcode (`cultural2026`) and serverless IP brute-force protection.
    - Real-time search keyword filter and category/status filtering.
    - Aggregated statistics: Total Submissions, Pending Review, Reviewed Count, and Upvotes Cast.
 
@@ -59,29 +59,42 @@
 
 ---
 
-## 🔒 Supabase Database Configuration & Migration
+## 🔒 Security Architecture & Hardening
 
-Your Supabase project is already linked and configured in `js/config.js` and `.env`:
-- **Supabase URL**: `https://mrdvxgcrdhnfaxradzoo.supabase.co`
-- **Publishable Key**: `sb_publishable_ttEcjraLqZg9y8qWKhan3w_kXPt4-i9`
-
-### Recommended 1-Click Migration
-To upgrade your `suggestions` table with dedicated columns, optimal indexes, and PostgreSQL Row-Level Security policies:
-1. Open your [Supabase Dashboard](https://supabase.com/dashboard/project/mrdvxgcrdhnfaxradzoo).
-2. Go to **SQL Editor > New Query**.
-3. Copy the contents of `supabase/schema.sql` and click **Run**.
-   - This ensures columns (`title`, `category`, `description`, `upvotes`, `is_approved`) are explicitly added, enables RLS policies allowing public read & submission, and enables Supabase Realtime publication.
+1. **PostgreSQL Row Level Security (RLS)**:
+   - `public.suggestions`: Public visitors have `SELECT` (approved ideas) and `INSERT` (validated submissions <= 1,000 chars) permissions only. Public `UPDATE` and `DELETE` policies are strictly revoked.
+   - `public.suggestion_votes`: Locked down completely with RLS. Public visitors cannot query voter tokens directly.
+2. **Atomic Upvote Function (`public.toggle_upvote`)**:
+   - `SECURITY DEFINER` function with strict regex token validation (`^voter_[a-zA-Z0-9_\-]{8,80}$`).
+   - Toggles device upvote atomically (inserts vote if not present; deletes vote if already voted).
+   - Rate limits total active votes per device across the platform to 50 votes to eliminate automated script flooding.
+3. **Zero Secret Leaks**:
+   - Frontend files use only the public publishable anon key (`sb_publishable_...`).
+   - Service-role keys and database passwords are never placed in client-side code.
+4. **Serverless Protections (`api/submit-suggestion.js` & `api/admin-action.js`)**:
+   - Sliding-window per-IP rate limiting (5 submissions per 10 mins).
+   - Honeypot bot trap rejecting automated form scrapers.
+   - Admin brute-force rate limiter (5 failed attempts locks IP for 15 minutes).
 
 ---
 
-## 🚀 Instant Vercel Deployment
+## 📋 Exact Launch Steps Required Before Going Live
 
-Deploying this project to Vercel requires zero code changes:
+1. **Step 1: Execute SQL Schema in Supabase (1-Click)**
+   - Open your [Supabase Dashboard](https://supabase.com/dashboard/project/mrdvxgcrdhnfaxradzoo).
+   - Navigate to **SQL Editor** > **New Query**.
+   - Copy the entire contents of [`supabase/schema.sql`](supabase/schema.sql) and click **Run**.
+   - *This creates the `suggestion_votes` table, installs the anti-abuse `toggle_upvote` and admin moderation RPCs, enables RLS, and enables Realtime publication.*
 
-1. Import this repository into [Vercel](https://vercel.com).
-2. Framework Preset: **Other** / Static.
-3. In **Settings > Environment Variables**, optionally add:
-   - `NEXT_PUBLIC_SUPABASE_URL`: `https://mrdvxgcrdhnfaxradzoo.supabase.co`
-   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: `sb_publishable_ttEcjraLqZg9y8qWKhan3w_kXPt4-i9`
-4. Click **Deploy**.
-5. Your website is live worldwide with instant real-time synchronization across all devices!
+2. **Step 2: Verify in Supabase Dashboard**
+   - Check **Table Editor** > `suggestions` has columns `title`, `category`, `description`, `upvotes`, `is_approved`, `reviewed`.
+   - Check **Table Editor** > `suggestion_votes` table exists.
+   - Check **Database** > **Publications** > `supabase_realtime` includes `suggestions`.
+
+3. **Step 3: Deploy to Vercel**
+   - Import the repository into [Vercel](https://vercel.com).
+   - In **Project Settings > Environment Variables**, verify:
+     - `NEXT_PUBLIC_SUPABASE_URL` = `https://mrdvxgcrdhnfaxradzoo.supabase.co`
+     - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` = `sb_publishable_ttEcjraLqZg9y8qWKhan3w_kXPt4-i9`
+     - `ADMIN_PASSCODE` = `cultural2026` (or your custom committee passcode)
+   - Click **Deploy**.

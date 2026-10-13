@@ -13,6 +13,7 @@ for f in \
   js/qrcode.min.js \
   js/app.js \
   api/submit-suggestion.js \
+  api/admin-action.js \
   assets/cultural-club-logo.jpg \
   supabase/schema.sql \
   vercel.json \
@@ -85,7 +86,26 @@ if [ $(grep -c "id: \"inspire-" js/suggestions-data.js) -ne 30 ]; then
 fi
 echo "[PASS] 8. All 30 inspiration suggestions present and verified."
 
-# 9. Verify JavaScript Syntax via macOS JavaScriptCore
+# 9. Verify Hardened toggle_upvote and Device-Bound suggestion_votes Table
+grep -q "CREATE TABLE IF NOT EXISTS public.suggestion_votes" supabase/schema.sql
+grep -q "toggle_upvote(p_id BIGINT, p_voter_token TEXT)" supabase/schema.sql
+grep -q "v_clean_token !~" supabase/schema.sql
+grep -q "REVOKE ALL ON TABLE public.suggestion_votes FROM anon, authenticated, public;" supabase/schema.sql
+echo "[PASS] 9. Anti-abuse upvoting verified: Unique device tracking & input validation."
+
+# 10. Verify Passcode-Protected Admin Functions
+grep -q "admin_delete_suggestion(p_id BIGINT, p_passcode TEXT)" supabase/schema.sql
+grep -q "admin_toggle_reviewed(p_id BIGINT, p_passcode TEXT)" supabase/schema.sql
+grep -q "isBruteForceBlocked" api/admin-action.js
+echo "[PASS] 10. Admin moderation protected by passcode and anti-brute-force rate limiting."
+
+# 11. Verify Mobile & Responsive CSS Rules
+grep -q "@media (max-width: 768px)" css/styles.css
+grep -q "@media (max-width: 480px)" css/styles.css
+grep -q "\.mgmt-panel {" css/styles.css
+echo "[PASS] 11. Mobile, tablet, and desktop responsive stylesheets verified."
+
+# 12. Verify JavaScript Syntax via macOS JavaScriptCore
 if [ -x /usr/bin/osascript ]; then
   /usr/bin/osascript -l JavaScript -e '
     ObjC.import("Foundation");
@@ -95,6 +115,11 @@ if [ -x /usr/bin/osascript ]; then
     
     globalThis.window = globalThis;
     globalThis.localStorage = {
+      getItem: function() { return null; },
+      setItem: function() {},
+      removeItem: function() {}
+    };
+    globalThis.sessionStorage = {
       getItem: function() { return null; },
       setItem: function() {},
       removeItem: function() {}
@@ -117,14 +142,28 @@ if [ -x /usr/bin/osascript ]; then
     if (typeof window.SuggestionStore.toggleUpvote !== "function") {
       throw new Error("SuggestionStore.toggleUpvote missing");
     }
+    if (typeof window.SuggestionStore.toggleReviewed !== "function") {
+      throw new Error("SuggestionStore.toggleReviewed missing");
+    }
+    if (typeof window.SuggestionStore.delete !== "function") {
+      throw new Error("SuggestionStore.delete missing");
+    }
 
     var module = { exports: {} };
     eval(read("api/submit-suggestion.js"));
     if (typeof module.exports !== "function") {
       throw new Error("api/submit-suggestion handler missing");
     }
+
+    var adminModule = { exports: {} };
+    var origModule = module;
+    module = adminModule;
+    eval(read("api/admin-action.js"));
+    if (typeof adminModule.exports !== "function") {
+      throw new Error("api/admin-action handler missing");
+    }
   ' >/dev/null
-  echo "[PASS] 9. JavaScript client and Node.js serverless syntax validated."
+  echo "[PASS] 12. JavaScript client and Node.js serverless syntax validated."
 fi
 
-echo "=== ALL SECURITY CHECKS AND VERIFICATION TESTS PASSED SUCCESSFULLY ==="
+echo "=== ALL SECURITY CHECKS AND ARCHITECTURE TESTS PASSED SUCCESSFULLY ==="

@@ -2,9 +2,10 @@
  * VERCEL SERVERLESS ENDPOINT — /api/submit-suggestion
  * 
  * Provides trusted server-side protection:
- * - Per-IP rate limiting (sliding window, max 5 submissions per 10 mins)
+ * - Per-IP sliding-window rate limiting (max 5 submissions per 10 mins)
  * - Server-side payload validation (title 2-120 chars, desc <= 1,000 chars, category whitelist)
  * - Anti-spam honeypot bot trap
+ * - Null-byte and control character sanitization
  * - Optional Cloudflare Turnstile CAPTCHA verification (server-side)
  * - Safe parameterized proxy to Supabase without exposing internal database details
  */
@@ -28,6 +29,17 @@ function isRateLimited(clientIp) {
   
   recent.push(now);
   rateLimitMap.set(clientIp, recent);
+
+  // Periodically clean stale keys to prevent memory growth
+  if (rateLimitMap.size > 2000) {
+    const cutoff = now - RATE_LIMIT_WINDOW_MS;
+    for (const [ip, list] of rateLimitMap.entries()) {
+      if (list.every(t => t < cutoff)) {
+        rateLimitMap.delete(ip);
+      }
+    }
+  }
+
   return false;
 }
 
@@ -41,6 +53,9 @@ const ALLOWED_CATEGORIES = new Set([
 ]);
 
 module.exports = async function handler(req, res) {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Cache-Control', 'no-store');
+
   // 1. Only allow POST
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -49,7 +64,7 @@ module.exports = async function handler(req, res) {
 
   // 2. Extract Client IP securely
   const forwarded = req.headers['x-forwarded-for'];
-  const clientIp = forwarded ? forwarded.split(',')[0].trim() : (req.headers['x-real-ip'] || '127.0.0.1');
+  const clientIp = forwarded ? forwarded.split(',')[0].trim() : (req.headers['x-real-ip'] || req.socket?.remoteAddress || '127.0.0.1');
 
   // 3. Server-Side Rate Limiting
   if (isRateLimited(clientIp)) {
@@ -60,7 +75,12 @@ module.exports = async function handler(req, res) {
   }
 
   // 4. Parse & Sanitize Body
-  const { title, category, description, website_bot_check, turnstileToken } = req.body || {};
+  let body = req.body;
+  if (typeof body === 'string') {
+    try { body = JSON.parse(body); } catch (e) { body = {}; }
+  }
+
+  const { title, category, description, website_bot_check, turnstileToken } = body || {};
 
   // 5. Honeypot check (bot trap)
   if (website_bot_check && String(website_bot_check).trim() !== '') {
@@ -88,9 +108,9 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  // 7. Strict Server-Side Input Validation
-  const cleanTitle = typeof title === 'string' ? title.trim() : '';
-  const cleanDesc = typeof description === 'string' ? description.trim() : '';
+  // 7. Strict Server-Side Input Validation & Sanitization
+  const cleanTitle = typeof title === 'string' ? title.replace(/\0/g, '').trim() : '';
+  const cleanDesc = typeof description === 'string' ? description.replace(/\0/g, '').trim() : '';
   const validCategory = ALLOWED_CATEGORIES.has(category) ? category : 'Other Ideas';
 
   if (!cleanTitle || cleanTitle.length < 2) {
@@ -113,6 +133,7 @@ module.exports = async function handler(req, res) {
     description: cleanDesc,
     upvotes: 0,
     is_approved: true,
+    reviewed: false,
     suggestion: cleanTitle
   };
 
@@ -137,7 +158,8 @@ module.exports = async function handler(req, res) {
             title: cleanTitle,
             category: validCategory,
             description: cleanDesc,
-            upvotes: 0
+            upvotes: 0,
+            reviewed: false
           })
         };
         dbResp = await fetch(`${supabaseUrl}/rest/v1/suggestions`, {

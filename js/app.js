@@ -503,18 +503,32 @@
       </article>
     `).join('');
 
+    function getOrPromptAdminPasscode(customPrompt) {
+      let pass = sessionStorage.getItem('cultural_admin_pass');
+      if (pass) return pass;
+      pass = prompt(customPrompt || 'Authorized Action: Enter Organizer Passcode (default: cultural2026):', '');
+      if (pass !== null && pass.trim()) {
+        sessionStorage.setItem('cultural_admin_pass', pass.trim());
+        return pass.trim();
+      }
+      return null;
+    }
+
     // Attach Review Toggle Button Listeners
     mgmtGrid.querySelectorAll('.btn-review-toggle').forEach(btn => {
       btn.addEventListener('click', async () => {
         const id = btn.getAttribute('data-id');
+        const pass = getOrPromptAdminPasscode('Authorized Action: Enter Organizer Passcode to shortlist this idea:');
+        if (!pass) return;
         try {
-          const updated = await window.SuggestionStore.toggleReviewed(id);
+          const updated = await window.SuggestionStore.toggleReviewed(id, pass);
           showToast(
             updated.reviewed ? 'Suggestion shortlisted!' : 'Review status reverted to pending',
             'success'
           );
         } catch (e) {
-          console.warn('Review toggle error:', e);
+          sessionStorage.removeItem('cultural_admin_pass');
+          showToast(e.message || 'Review action failed', 'danger');
         }
       });
     });
@@ -524,18 +538,14 @@
       btn.addEventListener('click', async () => {
         const id = btn.getAttribute('data-id');
         const title = btn.getAttribute('data-title');
-        const pass = prompt(`Authorized Action: Enter Organizer Passcode to delete "${title}":`, '');
-        if (pass === null) return;
-        const validPass = window.APP_CONFIG?.adminPasscode || 'cultural2026';
-        if (pass.trim() === validPass) {
-          try {
-            await window.SuggestionStore.delete(id);
-            showToast(`"${title}" removed from database`, 'danger');
-          } catch (e) {
-            showToast('Delete operation failed: ' + e.message, 'danger');
-          }
-        } else {
-          showToast('Unauthorized: Incorrect organizer passcode', 'danger');
+        const pass = getOrPromptAdminPasscode(`Authorized Action: Enter Organizer Passcode to delete "${title}":`);
+        if (!pass) return;
+        try {
+          await window.SuggestionStore.delete(id, pass);
+          showToast(`"${title}" removed from database`, 'danger');
+        } catch (e) {
+          sessionStorage.removeItem('cultural_admin_pass');
+          showToast(e.message || 'Delete operation failed', 'danger');
         }
       });
     });

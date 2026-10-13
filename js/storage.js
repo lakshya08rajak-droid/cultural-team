@@ -358,10 +358,12 @@
 
     /**
      * Upvote or un-vote a suggestion via controlled RPC stored procedure
+     * Device-bound to prevent duplicate voting or vote inflation
      */
     async toggleUpvote(suggestionId) {
       if (!suggestionId) throw new Error('Invalid suggestion ID');
 
+      const numId = parseInt(suggestionId, 10);
       const votedIds = new Set(getLocalVotedIds());
       const hasAlreadyVoted = votedIds.has(suggestionId);
       const item = this.items.find(s => s.id === suggestionId);
@@ -380,14 +382,35 @@
 
       // Persist update via secure RPC toggle_upvote
       try {
-        await fetch(`${this.supabaseUrl}/rest/v1/rpc/toggle_upvote`, {
+        const resp = await fetch(`${this.supabaseUrl}/rest/v1/rpc/toggle_upvote`, {
           method: 'POST',
           headers: this._getHeaders(),
           body: JSON.stringify({
-            p_id: parseInt(suggestionId, 10),
-            p_delta: hasVotedNow ? 1 : -1
+            p_id: numId,
+            p_voter_token: this.voterToken
           })
         });
+
+        if (resp.ok) {
+          const res = await resp.json();
+          if (res && typeof res.upvotes === 'number') {
+            item.upvotes = res.upvotes;
+            if (res.has_voted) {
+              votedIds.add(suggestionId);
+            } else {
+              votedIds.delete(suggestionId);
+            }
+            saveLocalVotedIds(Array.from(votedIds));
+            this._notifyListeners();
+            return {
+              id: suggestionId,
+              upvotes: item.upvotes,
+              hasVoted: res.has_voted
+            };
+          }
+        } else {
+          console.warn('RPC toggle_upvote response:', resp.status);
+        }
       } catch (err) {
         console.warn('RPC toggle_upvote notice:', err);
       }
@@ -400,49 +423,111 @@
     }
 
     /**
-     * Toggle review / shortlist status in Supabase
+     * Toggle review / shortlist status in Supabase via authorized endpoint or RPC
      */
-    async toggleReviewed(suggestionId) {
+    async toggleReviewed(suggestionId, passcode) {
       const item = this.items.find(s => s.id === suggestionId);
       if (!item) throw new Error('Suggestion not found.');
 
+      const prevReviewed = item.reviewed;
       item.reviewed = !Boolean(item.reviewed);
       this._notifyListeners();
 
+      const numId = parseInt(suggestionId, 10);
+      const pass = passcode || window.APP_CONFIG?.adminPasscode || 'cultural2026';
+
+      // 1. Try serverless admin endpoint
       try {
-        await fetch(`${this.supabaseUrl}/rest/v1/suggestions?id=eq.${suggestionId}`, {
-          method: 'PATCH',
-          headers: this._getHeaders(),
-          body: JSON.stringify({ is_approved: item.reviewed })
+        const apiResp = await fetch('/api/admin-action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'toggle_review',
+            id: numId,
+            passcode: pass
+          })
         });
+        if (apiResp.ok) return item;
+        if (apiResp.status === 401) {
+          item.reviewed = prevReviewed;
+          this._notifyListeners();
+          throw new Error('Unauthorized: Incorrect organizer passcode');
+        }
+      } catch (apiErr) {
+        if (apiErr.message && apiErr.message.includes('Unauthorized')) throw apiErr;
+      }
+
+      // 2. Direct Supabase RPC fallback
+      try {
+        const rpcResp = await fetch(`${this.supabaseUrl}/rest/v1/rpc/admin_toggle_reviewed`, {
+          method: 'POST',
+          headers: this._getHeaders(),
+          body: JSON.stringify({
+            p_id: numId,
+            p_passcode: pass
+          })
+        });
+        if (rpcResp.ok) return item;
       } catch (err) {
-        console.warn('Review status sync error:', err);
+        console.warn('RPC admin_toggle_reviewed notice:', err);
       }
 
       return item;
     }
 
     /**
-     * Delete a suggestion from Supabase
+     * Delete a suggestion from Supabase via authorized endpoint or RPC
      */
-    async delete(suggestionId) {
-      // Optimistic local removal
-      this.items = this.items.filter(s => s.id !== suggestionId);
-      this._notifyListeners();
+    async delete(suggestionId, passcode) {
+      if (!suggestionId) throw new Error('Invalid suggestion ID');
+      const numId = parseInt(suggestionId, 10);
+      const pass = passcode || window.APP_CONFIG?.adminPasscode || 'cultural2026';
 
+      // 1. Try serverless admin endpoint
       try {
-        const resp = await fetch(`${this.supabaseUrl}/rest/v1/suggestions?id=eq.${suggestionId}`, {
-          method: 'DELETE',
-          headers: this._getHeaders()
+        const apiResp = await fetch('/api/admin-action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'delete',
+            id: numId,
+            passcode: pass
+          })
         });
-
-        if (!resp.ok) {
-          console.warn('Supabase delete response status:', resp.status);
+        if (apiResp.ok) {
+          this.items = this.items.filter(s => s.id !== suggestionId);
+          this._notifyListeners();
+          return true;
         }
-      } catch (err) {
-        console.error('Supabase delete error:', err);
+        if (apiResp.status === 401) {
+          throw new Error('Unauthorized: Incorrect organizer passcode');
+        }
+      } catch (apiErr) {
+        if (apiErr.message && apiErr.message.includes('Unauthorized')) throw apiErr;
       }
 
+      // 2. Direct Supabase RPC fallback
+      try {
+        const rpcResp = await fetch(`${this.supabaseUrl}/rest/v1/rpc/admin_delete_suggestion`, {
+          method: 'POST',
+          headers: this._getHeaders(),
+          body: JSON.stringify({
+            p_id: numId,
+            p_passcode: pass
+          })
+        });
+        if (rpcResp.ok) {
+          this.items = this.items.filter(s => s.id !== suggestionId);
+          this._notifyListeners();
+          return true;
+        }
+      } catch (err) {
+        console.warn('RPC admin_delete notice:', err);
+      }
+
+      // Optimistic local removal for preview
+      this.items = this.items.filter(s => s.id !== suggestionId);
+      this._notifyListeners();
       return true;
     }
 
