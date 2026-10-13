@@ -99,6 +99,7 @@ body {
   position: relative;
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
+  padding-bottom: 74px;
 }
 
 /* ==============================================================================
@@ -1870,7 +1871,7 @@ body {
   margin-top: 5rem;
   border-top: 1px solid var(--border-subtle);
   background: rgba(30, 8, 12, 0.98);
-  padding: 4rem 1.25rem 2.5rem;
+  padding: 4rem 1.25rem 6.5rem;
   position: relative;
   z-index: 2;
 }
@@ -2420,7 +2421,7 @@ body {
 /* Toast Message Floating Notification */
 .toast-notice {
   position: fixed;
-  bottom: 2rem;
+  bottom: 5.75rem;
   right: 2rem;
   z-index: 2000;
   background: #111827;
@@ -2469,6 +2470,229 @@ body {
   color: #34d399;
 }
 
+/* ==============================================================================
+   PERSISTENT FIXED BOTTOM ANNOUNCEMENT BAR
+   "REVEALING WILL BE COMING TOMORROW"
+   ============================================================================== */
+.persistent-announcement-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 990;
+  background: linear-gradient(90deg, rgba(34, 8, 13, 0.96) 0%, rgba(66, 21, 28, 0.98) 50%, rgba(34, 8, 13, 0.96) 100%);
+  border-top: 1.5px solid rgba(232, 216, 196, 0.55);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 
+    0 -10px 35px rgba(18, 4, 7, 0.8), 
+    0 -1px 0 rgba(255, 251, 245, 0.35),
+    0 0 35px rgba(109, 41, 50, 0.45);
+  padding: 0.85rem 1.25rem;
+  transform: translateZ(0);
+  will-change: transform;
+  pointer-events: auto;
+}
+
+.persistent-announcement-bar::before {
+  content: '';
+  position: absolute;
+  top: -1.5px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #c7b7a3 20%, #fffbf5 50%, #e8d8c4 80%, transparent);
+  box-shadow: 0 0 16px rgba(255, 251, 245, 0.9);
+  pointer-events: none;
+}
+
+.announcement-bar-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.35rem;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.announcement-beacon {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.beacon-core {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fffbf5;
+  box-shadow: 0 0 12px #fffbf5, 0 0 20px #e8d8c4;
+}
+
+.beacon-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(232, 216, 196, 0.65);
+  animation: beaconPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes beaconPing {
+  0% { transform: scale(0.8); opacity: 0.95; }
+  80%, 100% { transform: scale(2.8); opacity: 0; }
+}
+
+.announcement-text-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.announcement-sparkle {
+  font-size: 1.15rem;
+  filter: drop-shadow(0 0 8px rgba(232, 216, 196, 0.7));
+  animation: sparkleFloat 3s ease-in-out infinite alternate;
+}
+
+@keyframes sparkleFloat {
+  0% { transform: translateY(0) scale(0.95); opacity: 0.8; }
+  100% { transform: translateY(-2px) scale(1.1); opacity: 1; }
+}
+
+.announcement-main-text {
+  font-family: var(--font-roman-title);
+  font-weight: 800;
+  font-size: clamp(0.95rem, 2.2vw, 1.25rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fffbf5;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+}
+
+/* Prominent Bold Dominant Styling for "TOMORROW" */
+.announcement-tomorrow-pill {
+  font-family: var(--font-roman-title);
+  font-weight: 900;
+  font-size: clamp(1.2rem, 2.8vw, 1.65rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ffffff 0%, #fffbf5 35%, #f4eae0 65%, #dfb581 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding: 0.22rem 1.1rem;
+  margin: 0 0.4rem;
+  border-radius: var(--radius-sm);
+  background-color: rgba(232, 216, 196, 0.22);
+  border: 1.8px solid rgba(255, 251, 245, 0.8);
+  box-shadow: 
+    0 0 25px rgba(232, 216, 196, 0.55), 
+    0 0 45px rgba(109, 41, 50, 0.5), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  display: inline-block;
+  animation: tomorrowPulse 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes tomorrowPulse {
+  0% {
+    box-shadow: 0 0 18px rgba(232, 216, 196, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    border-color: rgba(232, 216, 196, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 34px rgba(232, 216, 196, 0.85), 0 0 60px rgba(216, 174, 126, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    border-color: #ffffff;
+  }
+}
+
+.announcement-status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full);
+  background: rgba(109, 41, 50, 0.6);
+  border: 1px solid rgba(232, 216, 196, 0.35);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fffbf5;
+  box-shadow: 0 0 15px rgba(109, 41, 50, 0.4);
+}
+
+.announcement-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e8d8c4;
+  box-shadow: 0 0 8px #e8d8c4;
+}
+
+/* Mobile & Tablet Responsiveness for Announcement Bar */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 86px;
+  }
+  .site-footer {
+    padding-bottom: 7.5rem;
+  }
+  .toast-notice {
+    bottom: 6.5rem;
+    right: 1rem;
+    left: 1rem;
+    justify-content: center;
+  }
+  .persistent-announcement-bar {
+    padding: 0.75rem 0.85rem;
+  }
+  .announcement-bar-inner {
+    gap: 0.65rem;
+  }
+  .announcement-status-tag {
+    display: none;
+  }
+  .announcement-main-text {
+    font-size: 0.92rem;
+    letter-spacing: 0.08em;
+  }
+  .announcement-tomorrow-pill {
+    font-size: 1.15rem;
+    padding: 0.15rem 0.75rem;
+    letter-spacing: 0.1em;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding-bottom: 94px;
+  }
+  .persistent-announcement-bar {
+    padding: 0.65rem 0.5rem;
+  }
+  .announcement-main-text {
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+  }
+  .announcement-tomorrow-pill {
+    font-size: 1.05rem;
+    padding: 0.12rem 0.6rem;
+  }
+  .announcement-sparkle {
+    display: none;
+  }
+}
+
 /* Accessibility: Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -2486,7 +2710,11 @@ body {
   }
   .scenic-light-beam,
   .scenic-halo-glow,
-  .aurora-orb {
+  .aurora-orb,
+  .announcement-tomorrow-pill,
+  .beacon-ring,
+  .announcement-sparkle,
+  .persistent-announcement-bar::before {
     animation: none !important;
   }
 }
