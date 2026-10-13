@@ -608,6 +608,15 @@
     if (wall) wall.scrollIntoView({ behavior: 'smooth' });
   });
 
+  function getShareableUrl() {
+    if (window.location.protocol.startsWith('http') && 
+        !window.location.hostname.includes('localhost') && 
+        !window.location.hostname.includes('127.0.0.1')) {
+      return window.location.href.split('#')[0];
+    }
+    return window.APP_CONFIG?.productionUrl || 'https://cultural-team.vercel.app';
+  }
+
   // QR Code Modal
   function setupQRModal() {
     qrOpenBtns.forEach(btn => {
@@ -622,7 +631,7 @@
     });
 
     copyLinkBtn?.addEventListener('click', () => {
-      const url = window.location.href;
+      const url = getShareableUrl();
       navigator.clipboard.writeText(url).then(() => {
         copyLinkBtn.textContent = '✓ Link Copied!';
         setTimeout(() => {
@@ -633,7 +642,7 @@
   }
 
   function openQRModal() {
-    const currentUrl = window.location.href.split('#')[0];
+    const currentUrl = getShareableUrl();
     if (qrUrlDisplay) qrUrlDisplay.textContent = currentUrl;
 
     if (qrContainer && typeof window.generateQRCodeSVG === 'function') {

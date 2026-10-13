@@ -12,7 +12,7 @@ const CONFIG = {
 
   // Brand Metadata
   brand: {
-    name: "CULTURAL TEAM",
+    name: "Cultural Team",
     heroHeadline: "SOMETHING AMAZING IS COMING SOON!!!!",
     heroSubheadline: "DO YOU WANNA GUESS WHAT?",
     tagline: "College Arts & Cultural Committee",
