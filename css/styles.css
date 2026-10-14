@@ -2257,8 +2257,8 @@ body {
   }
 }
 
-/* Mobile Phone Breakpoint: Screens 767px and below */
-@media (max-width: 767px) {
+/* Mobile Phone & Tablet Breakpoint: Screens 768px and below */
+@media (max-width: 768px) {
   .header-nav {
     display: none !important;
   }
@@ -2280,9 +2280,6 @@ body {
   .header-cta-btn {
     display: inline-flex !important;
   }
-}
-
-@media (max-width: 768px) {
   .mandala-bg-img {
     object-position: center 30%;
   }
