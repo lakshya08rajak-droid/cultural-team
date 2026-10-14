@@ -8,7 +8,7 @@
  * - Dedicated Suggestions Management Hub (Review & Delete)
  * - Shared Reactive State Synchronization
  * - 30 Inspiration Ideas Gallery & Click-to-Prefill
- * - SVG QR Code Generator & Modals
+ * - Instant Feedback & Modals
  */
 
 (function () {
@@ -62,14 +62,6 @@
   const successPreviewTitle = document.getElementById('success-preview-title');
   const successPreviewCategory = document.getElementById('success-preview-category');
 
-  const qrModal = document.getElementById('qr-modal');
-  const qrModalClose = document.getElementById('qr-modal-close');
-  const qrOpenBtns = document.querySelectorAll('[data-open-qr]');
-  const qrContainer = document.getElementById('qr-code-canvas-container');
-  const qrUrlDisplay = document.getElementById('qr-url-display');
-  const copyLinkBtn = document.getElementById('copy-link-btn');
-  const shareNativeBtn = document.getElementById('share-native-btn');
-
   const toastNotice = document.getElementById('toast-notice');
   const toastText = document.getElementById('toast-text');
   const toastIcon = document.getElementById('toast-icon');
@@ -90,9 +82,7 @@
   // 1. INITIALIZATION
   // ============================================================================
   document.addEventListener('DOMContentLoaded', () => {
-    initScenic3DScroll();
     initParticlesCanvas();
-    initHeaderScroll();
     setupMobileNav();
     renderInspirationGrid();
     setupCategoryChipSelectors();
@@ -100,9 +90,7 @@
     setupQuickIdeas();
     setupFormSubmission();
     setupManagementControls();
-    setupQRModal();
     setupModals();
-    setupMobileFloatingActions();
 
     // Initial render of both the Public Wall and the Management Hub
     syncAllViews();
@@ -120,18 +108,7 @@
     renderManagementHub();
   }
 
-  // ============================================================================
-  // 2. HEADER SCROLL EFFECT
-  // ============================================================================
-  function initHeaderScroll() {
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 40) {
-        header?.classList.add('scrolled');
-      } else {
-        header?.classList.remove('scrolled');
-      }
-    }, { passive: true });
-  }
+
 
   // ============================================================================
   // 3. INSPIRATION SUGGESTIONS (30 CURATED EVENT CONCEPTS)
@@ -718,86 +695,7 @@
     if (wall) wall.scrollIntoView({ behavior: 'smooth' });
   });
 
-  function getShareableUrl() {
-    return window.APP_CONFIG?.productionUrl || 'https://cultural-team-git-main-culturalteam.vercel.app';
-  }
 
-  // QR Code Modal
-  function setupQRModal() {
-    qrOpenBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        openQRModal();
-      });
-    });
-
-    qrModalClose?.addEventListener('click', () => {
-      qrModal?.classList.remove('is-active');
-    });
-
-    copyLinkBtn?.addEventListener('click', () => {
-      const url = getShareableUrl();
-      navigator.clipboard.writeText(url).then(() => {
-        copyLinkBtn.textContent = '✓ Link Copied!';
-        setTimeout(() => {
-          copyLinkBtn.textContent = 'Copy Public Link';
-        }, 2000);
-      });
-    });
-
-    shareNativeBtn?.addEventListener('click', async () => {
-      const url = getShareableUrl();
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: 'Cultural Team — Share Your Event Suggestions',
-            text: 'Scan or click to share your ideas for our upcoming college cultural events!',
-            url: url
-          });
-        } catch (err) {
-          if (err && err.name !== 'AbortError') {
-            triggerCopyFallback(url);
-          }
-        }
-      } else {
-        triggerCopyFallback(url);
-      }
-    });
-
-    function triggerCopyFallback(url) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(() => {
-          showToast('✓ Link copied to clipboard!', 'success');
-        }).catch(() => {
-          showToast('Link: ' + url, 'info');
-        });
-      } else {
-        showToast('Link: ' + url, 'info');
-      }
-    }
-  }
-
-  function openQRModal() {
-    const targetUrl = getShareableUrl();
-    if (qrUrlDisplay) qrUrlDisplay.textContent = targetUrl;
-
-    if (qrContainer) {
-      const qrImageSrc = window.APP_CONFIG?.qrCodeImage || 'assets/cultural-qr-code.jpg';
-      qrContainer.innerHTML = `
-        <img 
-          src="${qrImageSrc}" 
-          alt="QR Code — Scan to Share Your Suggestions" 
-          class="qr-code-img" 
-          width="918" 
-          height="918" 
-          loading="eager" 
-          decoding="async"
-        />
-      `;
-    }
-
-    qrModal?.classList.add('is-active');
-  }
 
   // ============================================================================
   // MOBILE NAVIGATION DRAWER
@@ -988,173 +886,6 @@
     }
 
     animId = requestAnimationFrame(animate);
-  }
-
-  // ============================================================================
-  // CINEMATIC 3D PARALLAX SCENIC BACKGROUND ENGINE
-  // ============================================================================
-  function initScenic3DScroll() {
-    const stage = document.getElementById('scenic-3d-stage');
-    const mandalaPlane = document.getElementById('scenic-mandala-plane');
-    const ambientPlane = document.getElementById('scenic-ambient-plane');
-
-    if (!stage || !mandalaPlane) return;
-
-    // Accessibility: Respect prefers-reduced-motion
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) {
-      mandalaPlane.style.transform = 'scale(1.04) translateZ(0)';
-      return;
-    }
-
-    let targetScrollY = window.pageYOffset || document.documentElement.scrollTop;
-    let currentScrollY = targetScrollY;
-    let targetProgress = 0;
-    let currentProgress = 0;
-
-    let targetMouseX = 0;
-    let targetMouseY = 0;
-    let currentMouseX = 0;
-    let currentMouseY = 0;
-    let isMouseActive = false;
-
-    let isVisible = true;
-    let isRunning = false;
-
-    function requestFrameIfNeeded() {
-      if (!isRunning && isVisible) {
-        isRunning = true;
-        requestAnimationFrame(renderScenic3D);
-      }
-    }
-
-    // Track scroll target position and progress
-    function updateScrollTarget() {
-      targetScrollY = window.pageYOffset || document.documentElement.scrollTop;
-      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      targetProgress = Math.min(1, Math.max(0, targetScrollY / maxScroll));
-      requestFrameIfNeeded();
-    }
-
-    window.addEventListener('scroll', updateScrollTarget, { passive: true });
-    window.addEventListener('resize', updateScrollTarget, { passive: true });
-    window.addEventListener('touchmove', updateScrollTarget, { passive: true });
-    updateScrollTarget();
-
-    // Track mouse position on fine pointers (desktop) for subtle holographic depth
-    if (window.matchMedia('(pointer: fine)').matches) {
-      window.addEventListener('mousemove', (e) => {
-        isMouseActive = true;
-        const halfW = window.innerWidth / 2;
-        const halfH = window.innerHeight / 2;
-        targetMouseX = Math.max(-1, Math.min(1, (e.clientX - halfW) / halfW));
-        targetMouseY = Math.max(-1, Math.min(1, (e.clientY - halfH) / halfH));
-        requestFrameIfNeeded();
-      }, { passive: true });
-
-      window.addEventListener('mouseleave', () => {
-        targetMouseX = 0;
-        targetMouseY = 0;
-        requestFrameIfNeeded();
-      }, { passive: true });
-    }
-
-    document.addEventListener('visibilitychange', () => {
-      isVisible = !document.hidden;
-      if (isVisible) requestFrameIfNeeded();
-    });
-
-    const isMobile = window.innerWidth < 768;
-    const parallaxFactor = isMobile ? 0.10 : 0.16;
-    const ambientParallax = isMobile ? 0.05 : 0.08;
-    const maxZoomDelta = isMobile ? 0.06 : 0.12;
-
-    // 60fps/120fps smooth physics loop via requestAnimationFrame with idle pausing
-    function renderScenic3D() {
-      if (!isVisible) {
-        isRunning = false;
-        return;
-      }
-
-      // Linear interpolation (lerp) damping for silky-smooth motion
-      currentScrollY += (targetScrollY - currentScrollY) * 0.085;
-      currentProgress += (targetProgress - currentProgress) * 0.085;
-
-      if (isMouseActive) {
-        currentMouseX += (targetMouseX - currentMouseX) * 0.06;
-        currentMouseY += (targetMouseY - currentMouseY) * 0.06;
-      }
-
-      // Parallax translations
-      const mandalaY = -currentScrollY * parallaxFactor;
-      const ambientY = -currentScrollY * ambientParallax;
-
-      // Cinematic 3D zoom & depth curve (expands gently during exploration)
-      const zoomScale = 1.04 + Math.sin(currentProgress * Math.PI) * maxZoomDelta;
-      const depthZ = -45 + Math.sin(currentProgress * Math.PI) * 40;
-
-      // Subtle perspective pitch & rotation
-      const pitchX = Math.sin(currentProgress * Math.PI * 2) * 2.2;
-      const rollZ = (currentProgress - 0.5) * 6.5;
-
-      // Desktop holographic mouse tilt
-      const mouseTiltX = currentMouseX * 2.2;
-      const mouseTiltY = currentMouseY * 2.0;
-
-      // Hardware-accelerated 3D transforms
-      stage.style.transform = `rotateY(${mouseTiltX.toFixed(3)}deg) rotateX(${(-mouseTiltY).toFixed(3)}deg)`;
-
-      mandalaPlane.style.transform = `translate3d(0, ${mandalaY.toFixed(2)}px, ${depthZ.toFixed(2)}px) scale(${zoomScale.toFixed(4)}) rotateX(${pitchX.toFixed(3)}deg) rotateZ(${rollZ.toFixed(3)}deg)`;
-
-      if (ambientPlane) {
-        ambientPlane.style.transform = `translate3d(0, ${ambientY.toFixed(2)}px, 35px)`;
-      }
-
-      // Conserve device resources when movement has settled
-      const scrollDelta = Math.abs(targetScrollY - currentScrollY);
-      const progressDelta = Math.abs(targetProgress - currentProgress);
-      const mouseDelta = Math.abs(targetMouseX - currentMouseX) + Math.abs(targetMouseY - currentMouseY);
-
-      if (scrollDelta < 0.08 && progressDelta < 0.0002 && (!isMouseActive || mouseDelta < 0.001)) {
-        currentScrollY = targetScrollY;
-        currentProgress = targetProgress;
-        isRunning = false;
-        return;
-      }
-
-      requestAnimationFrame(renderScenic3D);
-    }
-
-    requestFrameIfNeeded();
-  }
-
-  // ============================================================================
-  // 9. MOBILE FLOATING ACTION PILL (Quick-jump & Back-to-top)
-  // ============================================================================
-  function setupMobileFloatingActions() {
-    const floatingBar = document.getElementById('mobile-floating-actions');
-    const topBtn = document.getElementById('floating-top-btn');
-    if (!floatingBar) return;
-
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          if (window.scrollY > 380) {
-            floatingBar.classList.add('is-visible');
-          } else {
-            floatingBar.classList.remove('is-visible');
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, { passive: true });
-
-    topBtn?.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
   }
 
   // ============================================================================

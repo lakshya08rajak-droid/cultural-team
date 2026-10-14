@@ -118,19 +118,14 @@ body {
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  perspective: 1200px;
-  perspective-origin: 50% 50%;
   background-color: var(--bg-deep);
 }
 
 .scenic-3d-stage {
   position: absolute;
-  top: -8%;
-  left: -8%;
-  width: 116%;
-  height: 116%;
-  transform-style: preserve-3d;
-  will-change: transform;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .scenic-depth-layer {
@@ -138,13 +133,11 @@ body {
   inset: 0;
   width: 100%;
   height: 100%;
-  transform-style: preserve-3d;
   pointer-events: none;
 }
 
 /* Layer 1: Atmospheric Deep Velvet Base & Theatrical Beams */
 .layer-base {
-  transform: translateZ(-160px) scale(1.18);
   background: radial-gradient(circle at 50% 30%, #4a151d 0%, #361017 40%, #22080d 85%, #180509 100%);
   z-index: 1;
 }
@@ -214,7 +207,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  will-change: transform;
 }
 
 .mandala-frame {
@@ -234,7 +226,6 @@ body {
   object-position: center 38%;
   display: block;
   filter: saturate(1.12) contrast(1.08) brightness(0.92);
-  transform: translateZ(0);
   /* Seamless edge feathering so image melts into surrounding velvet */
   mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, #000 60%, rgba(0,0,0,0.85) 75%, transparent 100%);
   -webkit-mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, #000 60%, rgba(0,0,0,0.85) 75%, transparent 100%);
@@ -251,7 +242,6 @@ body {
 /* Layer 3: Floating Aurora Orbs & Ambient Accents */
 .layer-ambient {
   z-index: 3;
-  transform: translateZ(35px);
 }
 
 .aurora-orb {
@@ -339,14 +329,9 @@ body {
   width: 100%;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  background: rgba(43, 12, 17, 0.88);
+  background: rgba(34, 9, 13, 0.95);
   border-bottom: 1px solid var(--border-subtle);
-  transition: all 0.3s ease;
-}
-
-.site-header.scrolled {
-  box-shadow: 0 8px 30px rgba(18, 4, 7, 0.7);
-  background: rgba(34, 9, 13, 0.96);
+  box-shadow: 0 4px 20px rgba(18, 4, 7, 0.65);
 }
 
 .header-inner {
@@ -1899,7 +1884,7 @@ body {
 }
 
 /* ==============================================================================
-   7. MODAL DIALOGS (SUCCESS POPUP, QR CODE MODAL, DATABASE CONFIG MODAL)
+   7. MODAL DIALOGS (SUCCESS SUBMISSION POPUP)
    ============================================================================== */
 .modal-overlay {
   position: fixed;
@@ -2035,69 +2020,7 @@ body {
   color: var(--text-muted);
 }
 
-/* QR Code Modal Styles */
-.qr-modal-container {
-  max-width: min(92vw, 460px);
-  padding: 2.25rem 1.75rem;
-}
 
-.qr-modal-heading {
-  font-size: clamp(1.2rem, 3.2vw, 1.45rem);
-  letter-spacing: 0.04em;
-  margin-bottom: 0.65rem;
-  color: #fffbf5;
-}
-
-.qr-instructions {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.55;
-  margin-bottom: 1.25rem;
-  max-width: 380px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.qr-display-box {
-  background: #ffffff;
-  padding: 1.25rem;
-  border-radius: var(--radius-md);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 1.25rem auto;
-  max-width: 100%;
-  box-sizing: border-box;
-  box-shadow: 0 0 35px rgba(232, 216, 196, 0.28), 0 10px 30px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(232, 216, 196, 0.4);
-}
-
-.qr-display-box img,
-.qr-code-img {
-  display: block;
-  max-width: 100%;
-  width: min(260px, 62vw);
-  height: auto;
-  aspect-ratio: 1 / 1;
-  object-fit: contain;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-}
-
-.qr-url-pill {
-  display: inline-block;
-  max-width: 100%;
-  padding: 0.45rem 1rem;
-  border-radius: var(--radius-full);
-  background: rgba(232, 216, 196, 0.1);
-  font-family: monospace;
-  font-size: 0.82rem;
-  color: #e8d8c4;
-  word-break: break-all;
-  overflow-wrap: anywhere;
-  margin-bottom: 1.25rem;
-  box-sizing: border-box;
-}
 
 /* ==============================================================================
    8. FOOTER WITH CULTURAL TEAM BRANDING
@@ -2211,10 +2134,6 @@ body {
 }
 
 @media (max-width: 768px) {
-  .scenic-3d-viewport {
-    perspective: 800px;
-  }
-
   .scenic-light-beam {
     opacity: 0.12;
     filter: blur(55px);
@@ -2485,18 +2404,6 @@ body {
 
   .brand-title {
     font-size: 0.95rem;
-  }
-
-  .btn-qr-label {
-    display: none;
-  }
-
-  .btn-qr-trigger {
-    padding: 0.5rem;
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    justify-content: center;
   }
 
   .app-container {
@@ -3166,7 +3073,7 @@ body {
 }
 
 /* ==============================================================================
-   MOBILE-FIRST ENHANCEMENTS: HORIZONTAL FILTER SWIPE & QUICK ACTIONS
+   MOBILE-FIRST ENHANCEMENTS: HORIZONTAL FILTER SWIPE
    ============================================================================== */
 @media (max-width: 680px) {
   .inspiration-filter-bar {
@@ -3189,81 +3096,7 @@ body {
   }
 }
 
-/* Floating Quick-Action Accessibility Pill */
-.mobile-floating-actions {
-  position: fixed;
-  right: 1.25rem;
-  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  z-index: 900;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(16px);
-  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s ease;
-  pointer-events: none;
-}
 
-.mobile-floating-actions.is-visible {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.floating-action-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.65rem 1.05rem;
-  background: linear-gradient(135deg, #6d2932 0%, #561c24 100%);
-  color: #fffbf5;
-  font-family: var(--font-roman-title);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-decoration: none;
-  border-radius: 9999px;
-  border: 1px solid rgba(232, 216, 196, 0.4);
-  box-shadow: 0 8px 24px rgba(18, 4, 7, 0.7), 0 0 12px rgba(199, 183, 163, 0.22);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  min-height: 44px;
-  touch-action: manipulation;
-}
-
-.floating-action-btn:hover,
-.floating-action-btn:active {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, #8b323e 0%, #6d2932 100%);
-  border-color: rgba(232, 216, 196, 0.75);
-  box-shadow: 0 12px 28px rgba(18, 4, 7, 0.85), 0 0 16px rgba(232, 216, 196, 0.4);
-  color: #ffffff;
-}
-
-.floating-action-btn.icon-only {
-  padding: 0;
-  width: 44px;
-  height: 44px;
-  justify-content: center;
-  font-size: 1.15rem;
-  font-weight: 900;
-  background: rgba(35, 9, 14, 0.92);
-}
-
-@media (max-width: 480px) {
-  .mobile-floating-actions {
-    right: 0.75rem;
-    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
-  }
-  .floating-action-btn {
-    padding: 0.55rem 0.85rem;
-    font-size: 0.8rem;
-  }
-}
 
 /* Tactile Field Focus Pulse */
 @keyframes pulseFieldFocus {

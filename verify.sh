@@ -10,7 +10,6 @@ for f in \
   js/config.js \
   js/suggestions-data.js \
   js/storage.js \
-  js/qrcode.min.js \
   js/app.js \
   api/submit-suggestion.js \
   api/admin-action.js \
@@ -131,7 +130,6 @@ if [ -x /usr/bin/osascript ]; then
 
     eval(read("js/config.js"));
     eval(read("js/suggestions-data.js"));
-    eval(read("js/qrcode.min.js"));
     eval(read("js/storage.js"));
 
     if (!window.SuggestionStore) {

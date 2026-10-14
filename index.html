@@ -133,22 +133,6 @@
           <span>Organizer Hub</span>
         </a>
 
-        <!-- QR Code Quick Trigger -->
-        <button
-          type="button"
-          class="btn btn-secondary btn-sm btn-qr-trigger"
-          data-open-qr
-          aria-label="Display QR Code for Mobile Scanning"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
-          <span class="btn-qr-label">QR Code</span>
-        </button>
-
         <!-- CTA Button -->
         <a href="#suggestions-section" class="btn btn-primary btn-sm header-cta-btn">
           <span>Share Ideas</span>
@@ -182,15 +166,6 @@
           <li><a href="#suggestion-management" class="mobile-nav-link">⚙️ Organizer Hub</a></li>
         </ul>
         <div class="mobile-nav-footer">
-          <button type="button" class="btn btn-secondary mobile-drawer-btn" data-open-qr aria-label="Display QR Code">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="7" height="7"></rect>
-              <rect x="14" y="3" width="7" height="7"></rect>
-              <rect x="14" y="14" width="7" height="7"></rect>
-              <rect x="3" y="14" width="7" height="7"></rect>
-            </svg>
-            <span>Scan QR Code</span>
-          </button>
           <a href="#suggestions-section" class="btn btn-primary mobile-drawer-btn" id="mobile-drawer-cta">
             <span>Share Your Ideas</span>
           </a>
@@ -260,16 +235,6 @@
         <a href="#inspiration-section" class="btn btn-secondary">
           <span>Explore 30 Inspiration Ideas</span>
         </a>
-
-        <button type="button" class="btn btn-secondary" data-open-qr>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
-          <span>Scan on Mobile</span>
-        </button>
       </div>
 
       <!-- ================================================================
@@ -723,52 +688,7 @@
     </div>
   </div>
 
-  <!-- ====================================================================
-       9. QR CODE PUBLIC ACCESS MODAL
-       ==================================================================== -->
-  <div id="qr-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title">
-    <div class="modal-container qr-modal-container">
-      <button type="button" id="qr-modal-close" class="modal-close-btn" aria-label="Close modal">×</button>
 
-      <h3 id="qr-modal-title" class="success-title-roman qr-modal-heading">
-        Scan to Share Your Suggestions
-      </h3>
-
-      <p class="qr-instructions">
-        Scan this QR code with your phone camera to open the Cultural Team website and share your suggestions.
-      </p>
-
-      <div class="qr-display-box">
-        <div id="qr-code-canvas-container">
-          <img
-            src="assets/cultural-qr-code.jpg"
-            alt="QR Code — Scan to Share Your Suggestions"
-            class="qr-code-img"
-            width="918"
-            height="918"
-            loading="eager"
-            decoding="async"
-          />
-        </div>
-      </div>
-
-      <div id="qr-url-display" class="qr-url-pill">
-        https://cultural-team-git-main-culturalteam.vercel.app
-      </div>
-
-      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
-        <button type="button" id="share-native-btn" class="btn btn-primary btn-sm">
-          <span aria-hidden="true">📤</span> Share Link
-        </button>
-        <button type="button" id="copy-link-btn" class="btn btn-secondary btn-sm">
-          Copy Public Link
-        </button>
-        <button type="button" onclick="window.print()" class="btn btn-secondary btn-sm">
-          Print Flyer Poster
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- ====================================================================
        10. FLOATING TOAST NOTIFICATION
@@ -813,7 +733,6 @@
         <div>
           <h4 class="footer-col-title">Public Sharing</h4>
           <ul class="footer-links">
-            <li><a href="javascript:void(0)" data-open-qr>Display QR Code</a></li>
             <li><a href="javascript:void(0)" onclick="window.print()">Print Event Flyer</a></li>
             <li><a href="https://vercel.com" target="_blank" rel="noopener noreferrer">Hosted on Vercel</a></li>
           </ul>
@@ -826,19 +745,6 @@
       </div>
     </div>
   </footer>
-
-  <!-- ====================================================================
-       FLOATING QUICK-ACTION ACCESSIBILITY PILL (Mobile & One-Handed)
-       ==================================================================== -->
-  <aside id="mobile-floating-actions" class="mobile-floating-actions" aria-label="Quick mobile actions">
-    <a href="#suggestions-section" id="floating-suggest-btn" class="floating-action-btn" aria-label="Jump directly to idea submission form">
-      <span aria-hidden="true">💡</span>
-      <span>Suggest Idea</span>
-    </a>
-    <button type="button" id="floating-top-btn" class="floating-action-btn icon-only" aria-label="Scroll back to top of page">
-      <span aria-hidden="true">↑</span>
-    </button>
-  </aside>
 
   <!-- ====================================================================
        PERSISTENT FIXED BOTTOM ANNOUNCEMENT BAR
@@ -868,7 +774,6 @@
   <!-- Application Scripts -->
   <script src="js/config.js"></script>
   <script src="js/suggestions-data.js"></script>
-  <script src="js/qrcode.min.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/app.js"></script>
 </body>

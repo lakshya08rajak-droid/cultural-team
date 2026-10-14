@@ -1,7 +1,7 @@
 # CULTURAL TEAM — OFFICIAL WEBSITE & LIVE PUBLIC EVENT SUGGESTIONS PORTAL
 
 > **"SOMETHING AMAZING IS COMING SOON!!!! DO YOU WANNA GUESS WHAT?"**  
-> Premium, mobile-responsive, and persistent cloud-powered web portal designed for college students and the public to access via a printed QR code — powered by Supabase PostgreSQL with real-time live synchronization.
+> Premium, mobile-responsive, and persistent cloud-powered web portal designed for college students and the public to access — powered by Supabase PostgreSQL with real-time live synchronization.
 
 ---
 
@@ -51,11 +51,6 @@
      - `IDEA SUBMITTED SUCCESSFULLY!`
      - `“Thank you for sharing your creativity with us! Your idea is now part of our Cultural Team community.”`
    - Form resets automatically and preserves input if an error occurs.
-
-8. **One-Click QR Code Modal & Print Poster**
-   - Built-in zero-dependency client SVG QR generator.
-   - Header button and hero buttons open the QR code modal for mobile visitors.
-   - Print-ready for festival flyers, notice boards, and social media.
 
 ---
 
