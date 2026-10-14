@@ -916,92 +916,10 @@
   }
 
   // ============================================================================
-  // 9. AMBIENT PARTICLES CANVAS
+  // 9. AMBIENT PARTICLES (DISABLED TO ELIMINATE SCROLL LAG)
   // ============================================================================
   function initParticlesCanvas() {
-    const canvas = document.getElementById('particles-canvas');
-    if (!canvas) return;
-
-    // Accessibility: Respect prefers-reduced-motion
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      canvas.style.display = 'none';
-      return;
-    }
-
-    const ctx = canvas.getContext('2d');
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
-
-    window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    }, { passive: true });
-
-    const colors = [
-      'rgba(232, 216, 196, 0.75)',
-      'rgba(199, 183, 163, 0.7)',
-      'rgba(109, 41, 50, 0.65)',
-      'rgba(86, 28, 36, 0.6)',
-      'rgba(255, 251, 245, 0.8)'
-    ];
-
-    const particleCount = window.innerWidth < 768 ? 14 : 36;
-    const particles = [];
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        radius: Math.random() * 2.2 + 0.8,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        vx: (Math.random() - 0.5) * 0.35,
-        vy: -Math.random() * 0.6 - 0.2,
-        alpha: Math.random() * 0.8 + 0.2
-      });
-    }
-
-    let isVisible = true;
-    let animId = null;
-
-    document.addEventListener('visibilitychange', () => {
-      isVisible = !document.hidden;
-      if (isVisible && !animId) {
-        animId = requestAnimationFrame(animate);
-      }
-    });
-
-    function animate() {
-      if (!isVisible) {
-        animId = null;
-        return;
-      }
-
-      ctx.clearRect(0, 0, width, height);
-
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.y < -10) {
-          p.y = height + 10;
-          p.x = Math.random() * width;
-        }
-        if (p.x < -10) p.x = width + 10;
-        if (p.x > width + 10) p.x = -10;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = p.color;
-        ctx.fill();
-      }
-
-      animId = requestAnimationFrame(animate);
-    }
-
-    animId = requestAnimationFrame(animate);
+    // Removed continuous 60fps requestAnimationFrame canvas loop to ensure zero scroll lag
   }
 
   // ============================================================================
