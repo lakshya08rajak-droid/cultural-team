@@ -16,10 +16,7 @@
 
   // DOM Elements
   const header = document.getElementById('site-header');
-  const mobileNavToggle = document.getElementById('mobile-nav-toggle');
-  const mobileNavDrawer = document.getElementById('mobile-nav-drawer');
-  const mobileNavBackdrop = document.getElementById('mobile-nav-backdrop');
-  const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
 
   // Suggestion Form Elements
   const suggestionForm = document.getElementById('suggestion-form');
@@ -83,7 +80,6 @@
   // ============================================================================
   document.addEventListener('DOMContentLoaded', () => {
     initParticlesCanvas();
-    setupMobileNav();
     renderInspirationGrid();
     setupCategoryChipSelectors();
     setupCharCounters();
@@ -697,68 +693,6 @@
 
 
 
-  // ============================================================================
-  // MOBILE NAVIGATION DRAWER
-  // ============================================================================
-  function setupMobileNav() {
-    if (!mobileNavToggle || !mobileNavDrawer) return;
-
-    function openMobileNav() {
-      mobileNavToggle.classList.add('is-active');
-      mobileNavToggle.setAttribute('aria-expanded', 'true');
-      mobileNavDrawer.classList.add('is-open');
-      mobileNavDrawer.removeAttribute('hidden');
-      mobileNavDrawer.setAttribute('aria-hidden', 'false');
-      mobileNavBackdrop?.classList.add('is-active');
-      mobileNavBackdrop?.setAttribute('aria-hidden', 'false');
-    }
-
-    function closeMobileNav() {
-      mobileNavToggle.classList.remove('is-active');
-      mobileNavToggle.setAttribute('aria-expanded', 'false');
-      mobileNavDrawer.classList.remove('is-open');
-      mobileNavDrawer.setAttribute('aria-hidden', 'true');
-      mobileNavBackdrop?.classList.remove('is-active');
-      mobileNavBackdrop?.setAttribute('aria-hidden', 'true');
-    }
-
-    mobileNavToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = mobileNavDrawer.classList.contains('is-open');
-      if (isOpen) {
-        closeMobileNav();
-      } else {
-        openMobileNav();
-      }
-    });
-
-    mobileNavBackdrop?.addEventListener('click', () => {
-      closeMobileNav();
-    });
-
-    mobileNavLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        closeMobileNav();
-      });
-    });
-
-    const mobileDrawerCta = document.getElementById('mobile-drawer-cta');
-    mobileDrawerCta?.addEventListener('click', () => {
-      closeMobileNav();
-    });
-
-    document.addEventListener('click', (e) => {
-      if (
-        mobileNavDrawer.classList.contains('is-open') &&
-        !mobileNavDrawer.contains(e.target) &&
-        !mobileNavToggle.contains(e.target)
-      ) {
-        closeMobileNav();
-      }
-    });
-
-    window.closeMobileNav = closeMobileNav;
-  }
 
   // Animated Counter
   function animateCounter(el, target) {

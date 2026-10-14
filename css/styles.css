@@ -446,172 +446,6 @@ body {
   gap: 0.75rem;
 }
 
-/* Mobile Navigation Hamburger Toggle Button */
-.mobile-nav-toggle {
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  width: 44px;
-  height: 44px;
-  padding: 8px;
-  background: rgba(232, 216, 196, 0.1);
-  border: 1px solid rgba(199, 183, 163, 0.28);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  color: #fffbf5;
-  transition: all 0.25s ease;
-  touch-action: manipulation;
-  z-index: 101;
-}
-
-.mobile-nav-toggle:hover {
-  background: rgba(232, 216, 196, 0.18);
-  border-color: rgba(232, 216, 196, 0.5);
-}
-
-.mobile-nav-toggle:focus-visible {
-  outline: 2px solid #e8d8c4;
-  outline-offset: 2px;
-}
-
-.hamburger-line {
-  display: block;
-  width: 20px;
-  height: 2px;
-  background-color: #fffbf5;
-  border-radius: 2px;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
-}
-
-.mobile-nav-toggle.is-active .line-1 {
-  transform: translateY(7px) rotate(45deg);
-}
-
-.mobile-nav-toggle.is-active .line-2 {
-  opacity: 0;
-  transform: scaleX(0);
-}
-
-.mobile-nav-toggle.is-active .line-3 {
-  transform: translateY(-7px) rotate(-45deg);
-}
-
-/* Mobile Navigation Drawer Dropdown */
-.mobile-nav-drawer {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: rgba(35, 9, 14, 0.98);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-bottom: 1.5px solid rgba(199, 183, 163, 0.28);
-  box-shadow: 0 16px 40px rgba(18, 4, 7, 0.85);
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  visibility: hidden;
-  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 99;
-}
-
-.mobile-nav-drawer.is-open {
-  max-height: 85vh;
-  opacity: 1;
-  visibility: visible;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Mobile Navigation Backdrop Dimmer */
-.mobile-nav-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(18, 4, 7, 0.68);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 95;
-  pointer-events: none;
-}
-
-.mobile-nav-backdrop.is-active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.mobile-nav-inner {
-  padding: 1.25rem 1.25rem 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.mobile-nav-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 0;
-  margin: 0;
-}
-
-.mobile-nav-link {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.85rem 1rem;
-  font-family: var(--font-roman-title);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: #fffbf5;
-  text-decoration: none;
-  border-radius: var(--radius-md);
-  background: rgba(232, 216, 196, 0.05);
-  border: 1px solid rgba(199, 183, 163, 0.15);
-  transition: all 0.2s ease;
-  min-height: 48px;
-  touch-action: manipulation;
-}
-
-.mobile-nav-link:hover,
-.mobile-nav-link:active {
-  background: rgba(109, 41, 50, 0.5);
-  border-color: rgba(232, 216, 196, 0.45);
-  color: #ffffff;
-  transform: translateX(4px);
-}
-
-.mobile-nav-footer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(199, 183, 163, 0.18);
-}
-
-.mobile-drawer-btn {
-  width: 100%;
-  min-height: 46px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 700;
-  border-radius: var(--radius-full);
-}
-
 /* Status indicator badge in header */
 .db-status-badge {
   display: inline-flex;
@@ -2154,22 +1988,6 @@ body {
     display: none;
   }
 
-  .mobile-nav-toggle {
-    display: flex;
-  }
-
-  .mobile-nav-drawer {
-    display: block;
-  }
-
-  .db-status-badge {
-    display: none;
-  }
-
-  .header-cta-btn {
-    display: none;
-  }
-
   .header-inner {
     padding: 0.65rem 1rem;
   }
@@ -2288,6 +2106,15 @@ body {
 @media (max-width: 480px) {
   .brand-subtext {
     display: none;
+  }
+  
+  .db-status-badge {
+    display: none;
+  }
+
+  .header-cta-btn {
+    padding: 0.38rem 0.75rem;
+    font-size: 0.8rem;
   }
   
   .brand-title {
