@@ -133,14 +133,163 @@
           <span>Organizer Hub</span>
         </a>
 
+        <!-- QR Code Quick Trigger -->
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm btn-qr-trigger"
+          data-open-qr
+          aria-label="Display QR Code for Mobile Scanning"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span class="btn-qr-label">QR Code</span>
+        </button>
+
         <!-- CTA Button -->
         <a href="#suggestions-section" class="btn btn-primary btn-sm header-cta-btn">
           <span>Share Ideas</span>
         </a>
 
+        <!-- Mobile Navigation Hamburger Toggle Button (Phone Screens Only) -->
+        <button
+          type="button"
+          id="mobile-nav-toggle"
+          class="mobile-nav-toggle"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
+          aria-controls="mobile-nav-drawer"
+        >
+          <span class="hamburger-bar bar-1"></span>
+          <span class="hamburger-bar bar-2"></span>
+          <span class="hamburger-bar bar-3"></span>
+        </button>
       </div>
     </div>
   </header>
+
+  <!-- ====================================================================
+       MOBILE NAVIGATION BACKDROP DIMMER
+       ==================================================================== -->
+  <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true"></div>
+
+  <!-- ====================================================================
+       MOBILE NAVIGATION DRAWER
+       ==================================================================== -->
+  <nav id="mobile-nav-drawer" class="mobile-nav-drawer" aria-label="Mobile Navigation Menu" aria-hidden="true" inert>
+    <div class="mobile-drawer-header">
+      <div class="mobile-drawer-brand">
+        <div class="brand-logo-frame drawer-logo-frame">
+          <img
+            src="assets/cultural-club-logo.jpg"
+            alt="Cultural Team Official Crest"
+            class="brand-logo-img"
+            width="36"
+            height="36"
+          />
+        </div>
+        <div class="mobile-drawer-title-group">
+          <span class="drawer-brand-title">CULTURAL TEAM</span>
+          <span class="drawer-brand-sub">Navigation Menu</span>
+        </div>
+      </div>
+      <button
+        type="button"
+        id="mobile-drawer-close"
+        class="mobile-drawer-close-btn"
+        aria-label="Close navigation menu"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Official Announcement Link -->
+    <a href="#mystery" class="mobile-drawer-announcement-card" aria-label="Official Teaser Announcement: Revealing Will Be Coming Tomorrow">
+      <div class="drawer-announcement-pill">
+        <span class="drawer-announcement-dot"></span>
+        <span class="drawer-announcement-tag">ANNOUNCEMENT</span>
+      </div>
+      <div class="drawer-announcement-text">
+        REVEALING WILL BE COMING <strong class="drawer-tomorrow-strong">TOMORROW</strong> ✨
+      </div>
+    </a>
+
+    <!-- Navigation Section Links -->
+    <div class="mobile-drawer-body">
+      <ul class="mobile-drawer-list">
+        <li>
+          <a href="#hero" class="mobile-drawer-link">
+            <span class="drawer-link-icon">🏛️</span>
+            <span class="drawer-link-text">Home</span>
+            <span class="drawer-link-arrow">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="#mystery" class="mobile-drawer-link">
+            <span class="drawer-link-icon">🎭</span>
+            <span class="drawer-link-text">Mystery Teaser</span>
+            <span class="drawer-link-arrow">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="#suggestions-section" class="mobile-drawer-link">
+            <span class="drawer-link-icon">✨</span>
+            <span class="drawer-link-text">Suggest Event</span>
+            <span class="drawer-link-arrow">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="#inspiration-section" class="mobile-drawer-link">
+            <span class="drawer-link-icon">💡</span>
+            <span class="drawer-link-text">30 Event Ideas</span>
+            <span class="drawer-link-arrow">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="#community-wall" class="mobile-drawer-link">
+            <span class="drawer-link-icon">🔥</span>
+            <span class="drawer-link-text">Community Wall</span>
+            <span class="drawer-link-arrow">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="#suggestion-management" class="mobile-drawer-link">
+            <span class="drawer-link-icon">⚙️</span>
+            <span class="drawer-link-text">Organizer Hub</span>
+            <span class="drawer-link-arrow">›</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Drawer Actions: QR Code & Main CTA -->
+    <div class="mobile-drawer-footer">
+      <button
+        type="button"
+        class="btn btn-secondary mobile-drawer-qr-btn"
+        data-open-qr
+        aria-label="Display QR Code for Mobile Scanning"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        <span>Scan QR Code</span>
+      </button>
+
+      <a href="#suggestions-section" class="btn btn-primary mobile-drawer-cta-btn">
+        <span>Share Your Ideas</span>
+      </a>
+    </div>
+  </nav>
 
   <!-- ====================================================================
        MAIN PAGE CONTENT
@@ -653,7 +802,49 @@
     </div>
   </div>
 
+  <!-- ====================================================================
+       9. QR CODE PUBLIC ACCESS MODAL
+       ==================================================================== -->
+  <div id="qr-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title">
+    <div class="modal-container qr-modal-container">
+      <button type="button" id="qr-modal-close" class="modal-close-btn" aria-label="Close modal">×</button>
 
+      <h3 id="qr-modal-title" class="success-title-roman qr-modal-heading">
+        Scan to Share Your Suggestions
+      </h3>
+
+      <p class="qr-instructions">
+        Scan this QR code with your phone camera to open the Cultural Team website and share your suggestions.
+      </p>
+
+      <div class="qr-display-box">
+        <div id="qr-code-canvas-container">
+          <img
+            src="assets/cultural-qr-code.jpg"
+            alt="QR Code — Scan to Share Your Suggestions"
+            class="qr-code-img"
+            width="918"
+            height="918"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      </div>
+
+      <div id="qr-url-display" class="qr-url-pill">
+        https://cultural-team-git-main-culturalteam.vercel.app
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+        <button type="button" id="copy-link-btn" class="btn btn-secondary btn-sm">
+          Copy Public Link
+        </button>
+        <button type="button" onclick="window.print()" class="btn btn-primary btn-sm">
+          Print Flyer Poster
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- ====================================================================
        10. FLOATING TOAST NOTIFICATION

@@ -59,6 +59,13 @@
   const successPreviewTitle = document.getElementById('success-preview-title');
   const successPreviewCategory = document.getElementById('success-preview-category');
 
+  const qrModal = document.getElementById('qr-modal');
+  const qrModalClose = document.getElementById('qr-modal-close');
+  const qrOpenBtns = document.querySelectorAll('[data-open-qr]');
+  const qrContainer = document.getElementById('qr-code-canvas-container');
+  const qrUrlDisplay = document.getElementById('qr-url-display');
+  const copyLinkBtn = document.getElementById('copy-link-btn');
+
   const toastNotice = document.getElementById('toast-notice');
   const toastText = document.getElementById('toast-text');
   const toastIcon = document.getElementById('toast-icon');
@@ -80,6 +87,8 @@
   // ============================================================================
   document.addEventListener('DOMContentLoaded', () => {
     initParticlesCanvas();
+    setupMobileNav();
+    setupQRModal();
     renderInspirationGrid();
     setupCategoryChipSelectors();
     setupCharCounters();
@@ -691,10 +700,183 @@
     if (wall) wall.scrollIntoView({ behavior: 'smooth' });
   });
 
+  function getShareableUrl() {
+    return window.APP_CONFIG?.productionUrl || 'https://cultural-team-git-main-culturalteam.vercel.app';
+  }
 
+  // QR Code Public Modal
+  function setupQRModal() {
+    qrOpenBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (typeof window.closeMobileNav === 'function') {
+          window.closeMobileNav();
+        }
+        openQRModal();
+      });
+    });
 
+    qrModalClose?.addEventListener('click', () => {
+      qrModal?.classList.remove('is-active');
+    });
 
-  // Animated Counter
+    copyLinkBtn?.addEventListener('click', () => {
+      const url = getShareableUrl();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          copyLinkBtn.textContent = '✓ Link Copied!';
+          setTimeout(() => {
+            copyLinkBtn.textContent = 'Copy Public Link';
+          }, 2000);
+        }).catch(() => {
+          fallbackCopyText(url);
+        });
+      } else {
+        fallbackCopyText(url);
+      }
+    });
+  }
+
+  function fallbackCopyText(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      if (copyLinkBtn) {
+        copyLinkBtn.textContent = '✓ Link Copied!';
+        setTimeout(() => {
+          copyLinkBtn.textContent = 'Copy Public Link';
+        }, 2000);
+      }
+    } catch (_) {}
+    document.body.removeChild(ta);
+  }
+
+  function openQRModal() {
+    const targetUrl = getShareableUrl();
+    if (qrUrlDisplay) qrUrlDisplay.textContent = targetUrl;
+
+    if (qrContainer) {
+      const qrImageSrc = window.APP_CONFIG?.qrCodeImage || 'assets/cultural-qr-code.jpg';
+      qrContainer.innerHTML = `
+        <img 
+          src="${qrImageSrc}" 
+          alt="QR Code — Scan to Share Your Suggestions" 
+          class="qr-code-img" 
+          width="918" 
+          height="918" 
+          loading="eager" 
+          decoding="async"
+        />
+      `;
+    }
+
+    qrModal?.classList.add('is-active');
+  }
+
+  // ============================================================================
+  // 9. MOBILE NAVIGATION DRAWER
+  // ============================================================================
+  function setupMobileNav() {
+    const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+    const mobileNavDrawer = document.getElementById('mobile-nav-drawer');
+    const mobileNavBackdrop = document.getElementById('mobile-nav-backdrop');
+    const mobileDrawerClose = document.getElementById('mobile-drawer-close');
+    const mobileNavLinks = document.querySelectorAll(
+      '.mobile-drawer-link, .mobile-drawer-announcement-card, .mobile-drawer-cta-btn'
+    );
+
+    if (!mobileNavToggle || !mobileNavDrawer) return;
+
+    function openMobileNav() {
+      mobileNavToggle.classList.add('is-active');
+      mobileNavToggle.setAttribute('aria-expanded', 'true');
+      mobileNavDrawer.classList.add('is-open');
+      mobileNavDrawer.removeAttribute('inert');
+      mobileNavDrawer.setAttribute('aria-hidden', 'false');
+      if (mobileNavBackdrop) {
+        mobileNavBackdrop.classList.add('is-active');
+        mobileNavBackdrop.setAttribute('aria-hidden', 'false');
+      }
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileNav() {
+      mobileNavToggle.classList.remove('is-active');
+      mobileNavToggle.setAttribute('aria-expanded', 'false');
+      mobileNavDrawer.classList.remove('is-open');
+      mobileNavDrawer.setAttribute('inert', '');
+      mobileNavDrawer.setAttribute('aria-hidden', 'true');
+      if (mobileNavBackdrop) {
+        mobileNavBackdrop.classList.remove('is-active');
+        mobileNavBackdrop.setAttribute('aria-hidden', 'true');
+      }
+      document.body.style.overflow = '';
+    }
+
+    // Toggle button click/tap
+    mobileNavToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = mobileNavDrawer.classList.contains('is-open');
+      if (isOpen) {
+        closeMobileNav();
+      } else {
+        openMobileNav();
+      }
+    });
+
+    // Close button inside drawer
+    mobileDrawerClose?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeMobileNav();
+    });
+
+    // Backdrop click
+    mobileNavBackdrop?.addEventListener('click', () => {
+      closeMobileNav();
+    });
+
+    // Close on selecting any navigation link
+    mobileNavLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        closeMobileNav();
+      });
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileNavDrawer.classList.contains('is-open')) {
+        closeMobileNav();
+        mobileNavToggle.focus();
+      }
+    });
+
+    // Close on outside tap
+    document.addEventListener('click', (e) => {
+      if (
+        mobileNavDrawer.classList.contains('is-open') &&
+        !mobileNavDrawer.contains(e.target) &&
+        !mobileNavToggle.contains(e.target)
+      ) {
+        closeMobileNav();
+      }
+    });
+
+    // Automatically close mobile nav when resizing to desktop/tablet (>= 768px)
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768 && mobileNavDrawer.classList.contains('is-open')) {
+        closeMobileNav();
+      }
+    });
+
+    window.closeMobileNav = closeMobileNav;
+    window.openMobileNav = openMobileNav;
+  }
+
   function animateCounter(el, target) {
     if (!el) return;
     const start = parseInt(el.textContent || '0', 10) || 0;

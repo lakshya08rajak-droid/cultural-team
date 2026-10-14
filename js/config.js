@@ -9,6 +9,7 @@ const CONFIG = {
 
   // Production Domain
   productionUrl: "https://cultural-team-git-main-culturalteam.vercel.app",
+  qrCodeImage: "assets/cultural-qr-code.jpg",
 
   // Brand Metadata
   brand: {
