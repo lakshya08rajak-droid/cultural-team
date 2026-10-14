@@ -214,6 +214,56 @@ body {
   gap: 1rem;
 }
 
+/* ==============================================================================
+   INSTITUTIONAL IDENTITY: ITM SKILLS UNIVERSITY
+   Positioned in the upper-left corner directly above Cultural Team branding
+   ============================================================================== */
+.brand-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.28rem;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+  transition: opacity 0.2s ease;
+}
+
+.brand-container:hover {
+  opacity: 0.95;
+}
+
+.brand-container:focus-visible {
+  outline: 2px solid var(--gold-primary);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.university-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 2.5px 7px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  line-height: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.university-brand-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.university-logo-img {
+  display: block;
+  height: 22px;
+  width: auto;
+  max-width: 110px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
 .brand-wrapper {
   display: flex;
   align-items: center;
@@ -2288,6 +2338,15 @@ body {
     padding: 0.65rem 1rem;
   }
 
+  .university-brand-badge {
+    padding: 2px 5.5px;
+  }
+
+  .university-logo-img {
+    height: 19px;
+    max-width: 95px;
+  }
+
   /* Prevent iOS Safari auto-zoom by enforcing >= 16px font on inputs */
   .form-input,
   .form-textarea,
@@ -2518,6 +2577,15 @@ body {
 @media (max-width: 360px) {
   .header-inner {
     padding: 0.5rem 0.65rem;
+  }
+
+  .university-brand-badge {
+    padding: 1.5px 4.5px;
+  }
+
+  .university-logo-img {
+    height: 16px;
+    max-width: 78px;
   }
 
   .brand-logo-frame {
