@@ -41,7 +41,7 @@
   />
 
   <!-- Main Editorial Stylesheet -->
-  <link rel="stylesheet" href="css/styles.css?v=20261014-v5" />
+  <link rel="stylesheet" href="css/styles.css?v=20261014-v6" />
 
   <!-- Supabase Official Client Library for Real-Time Synchronization -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -214,7 +214,7 @@
         <span class="drawer-announcement-tag">ANNOUNCEMENT</span>
       </div>
       <div class="drawer-announcement-text">
-        REVEALING WILL BE COMING <strong class="drawer-tomorrow-strong">TOMORROW</strong> ✨
+        <span id="drawer-announcement-prefix">REVEALING WILL BE COMING</span> <strong class="drawer-tomorrow-strong" id="drawer-countdown-timer">TOMORROW</strong> ✨
       </div>
     </a>
 
@@ -913,22 +913,22 @@
 
       <div class="announcement-text-wrapper">
         <span class="announcement-sparkle" aria-hidden="true">✨</span>
-        <span class="announcement-main-text">REVEALING WILL BE COMING</span>
-        <strong class="announcement-tomorrow-pill">TOMORROW</strong>
+        <span class="announcement-main-text" id="announcement-main-text">REVEALING WILL BE COMING</span>
+        <strong class="announcement-tomorrow-pill" id="announcement-countdown-timer" aria-live="polite">TOMORROW</strong>
         <span class="announcement-sparkle" aria-hidden="true">✨</span>
       </div>
 
-      <div class="announcement-status-tag" aria-hidden="true">
-        <span class="announcement-live-dot"></span>
-        <span>OFFICIAL TEASER</span>
+      <div class="announcement-status-tag" id="announcement-status-tag" aria-hidden="true">
+        <span class="announcement-live-dot" id="announcement-live-dot"></span>
+        <span id="announcement-status-label">OFFICIAL TEASER</span>
       </div>
     </div>
   </aside>
 
   <!-- Application Scripts -->
-  <script src="js/config.js?v=20261014-v5"></script>
-  <script src="js/suggestions-data.js?v=20261014-v5"></script>
-  <script src="js/storage.js?v=20261014-v5"></script>
-  <script src="js/app.js?v=20261014-v5"></script>
+  <script src="js/config.js?v=20261014-v6"></script>
+  <script src="js/suggestions-data.js?v=20261014-v6"></script>
+  <script src="js/storage.js?v=20261014-v6"></script>
+  <script src="js/app.js?v=20261014-v6"></script>
 </body>
 </html>

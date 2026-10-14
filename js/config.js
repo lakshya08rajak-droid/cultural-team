@@ -38,6 +38,16 @@ const CONFIG = {
     maxTitleLength: 100,
     maxDescriptionLength: 350,
     submissionCooldownSeconds: 5
+  },
+
+  // Live Reveal Countdown Configuration
+  // Target: 15 October 2026, 1:45:00 PM IST (Asia/Kolkata, UTC+05:30)
+  // Activation: 15 October 2026, 12:00:00 AM IST (Midnight)
+  countdown: {
+    targetIso: "2026-10-15T13:45:00+05:30",
+    activationIso: "2026-10-15T00:00:00+05:30",
+    timeZone: "Asia/Kolkata",
+    targetLabel: "15 October 2026, 1:45 PM IST"
   }
 };
 

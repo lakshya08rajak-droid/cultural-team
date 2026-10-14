@@ -89,6 +89,7 @@
     initParticlesCanvas();
     setupMobileNav();
     setupQRModal();
+    setupCountdownTimer();
     renderInspirationGrid();
     setupCategoryChipSelectors();
     setupCharCounters();
@@ -923,7 +924,195 @@
   }
 
   // ============================================================================
-  // 10. SANITIZATION UTILITIES
+  // 10. LIVE OCTOBER 15 REVEAL COUNTDOWN TIMER
+  // Target: 15 October 2026, 1:45:00 PM IST (Asia/Kolkata, UTC+05:30)
+  // Activation: 15 October 2026, 12:00:00 AM IST (Midnight)
+  // Format: HH : MM : SS (or DD : HH : MM : SS when spanning days)
+  // ============================================================================
+  function setupCountdownTimer() {
+    // Exact Target & Activation timestamps (IST, UTC+05:30)
+    // Target: 15 Oct 2026, 13:45:00 IST = 1792052100000 ms
+    // Activation: 15 Oct 2026, 00:00:00 IST = 1792002600000 ms
+    const targetIso = window.APP_CONFIG?.countdown?.targetIso || '2026-10-15T13:45:00+05:30';
+    const activationIso = window.APP_CONFIG?.countdown?.activationIso || '2026-10-15T00:00:00+05:30';
+
+    const targetTimestamp = Date.parse(targetIso);
+    const activationTimestamp = Date.parse(activationIso);
+
+    // DOM Elements
+    const timerEl = document.getElementById('announcement-countdown-timer');
+    const mainTextEl = document.getElementById('announcement-main-text');
+    const statusTagEl = document.getElementById('announcement-status-tag');
+    const statusLabelEl = document.getElementById('announcement-status-label');
+    const drawerTimerEl = document.getElementById('drawer-countdown-timer');
+    const drawerPrefixEl = document.getElementById('drawer-announcement-prefix');
+
+    if (!timerEl && !drawerTimerEl) return;
+
+    let timerInterval = null;
+    let hasTriggeredCompletion = false;
+
+    function getNow() {
+      if (typeof window.__mockNow === 'number') {
+        return window.__mockNow;
+      }
+      return Date.now();
+    }
+
+    function formatTimeRemaining(ms) {
+      if (ms <= 0) return '00 : 00 : 00';
+      const totalSeconds = Math.floor(ms / 1000);
+      const seconds = totalSeconds % 60;
+      const totalMinutes = Math.floor(totalSeconds / 60);
+      const minutes = totalMinutes % 60;
+      const totalHours = Math.floor(totalMinutes / 60);
+      const hours = totalHours % 24;
+      const days = Math.floor(totalHours / 24);
+
+      const pad = (n) => String(n).padStart(2, '0');
+
+      if (days > 0) {
+        return `${days}D : ${pad(hours)} : ${pad(minutes)} : ${pad(seconds)}`;
+      }
+      return `${pad(totalHours)} : ${pad(minutes)} : ${pad(seconds)}`;
+    }
+
+    function computeState(nowMs) {
+      const now = typeof nowMs === 'number' ? nowMs : getNow();
+
+      // State A: Before Midnight 15 October 2026 IST
+      if (now < activationTimestamp) {
+        return {
+          status: 'pre-reveal',
+          displayText: 'TOMORROW',
+          prefixText: 'REVEALING WILL BE COMING',
+          statusLabel: 'OFFICIAL TEASER',
+          msRemaining: targetTimestamp - now,
+          isActive: false,
+          isComplete: false
+        };
+      }
+
+      // State B: Active Countdown between Midnight and 1:45 PM IST
+      if (now < targetTimestamp) {
+        const remaining = targetTimestamp - now;
+        return {
+          status: 'active',
+          displayText: formatTimeRemaining(remaining),
+          prefixText: 'REVEALING IN',
+          statusLabel: 'LIVE COUNTDOWN',
+          msRemaining: remaining,
+          isActive: true,
+          isComplete: false
+        };
+      }
+
+      // State C: Reached Zero or Past 1:45 PM IST
+      return {
+        status: 'complete',
+        displayText: '00 : 00 : 00',
+        prefixText: 'THE REVEAL IS LIVE',
+        statusLabel: 'FESTIVAL REVEALED',
+        msRemaining: 0,
+        isActive: false,
+        isComplete: true
+      };
+    }
+
+    function updateCountdown() {
+      const state = computeState();
+
+      if (state.status === 'pre-reveal') {
+        if (timerEl) {
+          timerEl.textContent = state.displayText;
+          timerEl.classList.remove('is-active-timer', 'is-complete');
+        }
+        if (mainTextEl) mainTextEl.textContent = state.prefixText;
+        if (statusLabelEl) statusLabelEl.textContent = state.statusLabel;
+        if (statusTagEl) statusTagEl.classList.remove('is-live');
+        if (drawerTimerEl) drawerTimerEl.textContent = state.displayText;
+        if (drawerPrefixEl) drawerPrefixEl.textContent = state.prefixText;
+        return;
+      }
+
+      if (state.status === 'active') {
+        if (timerEl) {
+          timerEl.textContent = state.displayText;
+          timerEl.classList.add('is-active-timer');
+          timerEl.classList.remove('is-complete');
+        }
+        if (mainTextEl) mainTextEl.textContent = state.prefixText;
+        if (statusLabelEl) statusLabelEl.textContent = state.statusLabel;
+        if (statusTagEl) statusTagEl.classList.add('is-live');
+        if (drawerTimerEl) drawerTimerEl.textContent = state.displayText;
+        if (drawerPrefixEl) drawerPrefixEl.textContent = state.prefixText;
+        return;
+      }
+
+      if (state.status === 'complete') {
+        if (timerEl) {
+          timerEl.textContent = state.displayText;
+          timerEl.classList.remove('is-active-timer');
+          timerEl.classList.add('is-complete');
+        }
+        if (mainTextEl) mainTextEl.textContent = state.prefixText;
+        if (statusLabelEl) statusLabelEl.textContent = state.statusLabel;
+        if (statusTagEl) statusTagEl.classList.add('is-live');
+        if (drawerTimerEl) drawerTimerEl.textContent = state.displayText;
+        if (drawerPrefixEl) drawerPrefixEl.textContent = state.prefixText;
+
+        // Trigger one-time reveal completion transition
+        if (!hasTriggeredCompletion) {
+          hasTriggeredCompletion = true;
+          triggerRevealCompletion();
+        }
+
+        // Stop timer interval once target has passed
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+      }
+    }
+
+    function triggerRevealCompletion() {
+      const announcementBar = document.getElementById('persistent-announcement-bar');
+      if (announcementBar) {
+        announcementBar.classList.add('is-revealed');
+      }
+      const mysteryCard = document.getElementById('mystery');
+      if (mysteryCard) {
+        mysteryCard.classList.add('is-revealed');
+      }
+    }
+
+    // Run initial tick immediately
+    updateCountdown();
+
+    // Start 1-second interval
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(updateCountdown, 1000);
+
+    // Resynchronize immediately when tab becomes visible or receives focus
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        updateCountdown();
+      }
+    });
+    window.addEventListener('focus', updateCountdown);
+
+    // Expose for testing & auditing
+    window.APP_COUNTDOWN = {
+      computeState: computeState,
+      formatTimeRemaining: formatTimeRemaining,
+      targetTimestamp: targetTimestamp,
+      activationTimestamp: activationTimestamp,
+      update: updateCountdown
+    };
+  }
+
+  // ============================================================================
+  // 11. SANITIZATION UTILITIES
   // ============================================================================
   function escapeHTML(str) {
     if (!str) return '';
