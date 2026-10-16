@@ -788,7 +788,7 @@
     const mobileNavBackdrop = document.getElementById('mobile-nav-backdrop');
     const mobileDrawerClose = document.getElementById('mobile-drawer-close');
     const mobileNavLinks = document.querySelectorAll(
-      '.mobile-drawer-link, .mobile-drawer-announcement-card, .mobile-drawer-cta-btn'
+      '.mobile-drawer-link, .mobile-drawer-cta-btn'
     );
 
     if (!mobileNavToggle || !mobileNavDrawer) return;
