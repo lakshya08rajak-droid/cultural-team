@@ -924,23 +924,17 @@
   }
 
   // ============================================================================
-  // 10. LIVE OCTOBER 15 REVEAL COUNTDOWN TIMER
-  // Target: 15 October 2026, 1:45:00 PM IST (Asia/Kolkata, UTC+05:30)
-  // Activation: 15 October 2026, 12:00:00 AM IST (Midnight)
-  // Format: HH : MM : SS (or DD : HH : MM : SS when spanning days)
+  // 10. LIVE HALLOWEEN PARTY COUNTDOWN TIMER
+  // Target: Friday, 30 October 2026, 6:00:00 PM IST (Asia/Kolkata, UTC+05:30)
+  // Format: "03 DAYS : 18 HOURS : 24 MINUTES : 45 SECONDS"
   // ============================================================================
   function setupCountdownTimer() {
-    // Exact Target & Activation timestamps (IST, UTC+05:30)
-    // Target: 15 Oct 2026, 13:45:00 IST = 1792052100000 ms
-    // Activation: 15 Oct 2026, 00:00:00 IST = 1792002600000 ms
-    const targetIso = window.APP_CONFIG?.countdown?.targetIso || '2026-10-15T13:45:00+05:30';
-    const activationIso = window.APP_CONFIG?.countdown?.activationIso || '2026-10-15T00:00:00+05:30';
-
+    const targetIso = window.APP_CONFIG?.countdown?.targetIso || '2026-10-30T18:00:00+05:30';
     const targetTimestamp = Date.parse(targetIso);
-    const activationTimestamp = Date.parse(activationIso);
+    const completionMsg = window.APP_CONFIG?.countdown?.completionMessage || 'THE PARTY STARTS NOW!';
 
     // DOM Elements
-    const timerEl = document.getElementById('announcement-countdown-timer');
+    const timerEl = document.getElementById('halloween-countdown-timer') || document.getElementById('announcement-countdown-timer');
     const mainTextEl = document.getElementById('announcement-main-text');
     const statusTagEl = document.getElementById('announcement-status-tag');
     const statusLabelEl = document.getElementById('announcement-status-label');
@@ -950,7 +944,6 @@
     if (!timerEl && !drawerTimerEl) return;
 
     let timerInterval = null;
-    let hasTriggeredCompletion = false;
 
     function getNow() {
       if (typeof window.__mockNow === 'number') {
@@ -960,7 +953,7 @@
     }
 
     function formatTimeRemaining(ms) {
-      if (ms <= 0) return '00 : 00 : 00';
+      if (ms <= 0) return '00 DAYS : 00 HOURS : 00 MINUTES : 00 SECONDS';
       const totalSeconds = Math.floor(ms / 1000);
       const seconds = totalSeconds % 60;
       const totalMinutes = Math.floor(totalSeconds / 60);
@@ -970,36 +963,18 @@
       const days = Math.floor(totalHours / 24);
 
       const pad = (n) => String(n).padStart(2, '0');
-
-      if (days > 0) {
-        return `${days}D : ${pad(hours)} : ${pad(minutes)} : ${pad(seconds)}`;
-      }
-      return `${pad(totalHours)} : ${pad(minutes)} : ${pad(seconds)}`;
+      return `${pad(days)} DAYS : ${pad(hours)} HOURS : ${pad(minutes)} MINUTES : ${pad(seconds)} SECONDS`;
     }
 
     function computeState(nowMs) {
       const now = typeof nowMs === 'number' ? nowMs : getNow();
 
-      // State A: Before Midnight 15 October 2026 IST
-      if (now < activationTimestamp) {
-        return {
-          status: 'pre-reveal',
-          displayText: 'TOMORROW',
-          prefixText: 'REVEALING WILL BE COMING',
-          statusLabel: 'OFFICIAL TEASER',
-          msRemaining: targetTimestamp - now,
-          isActive: false,
-          isComplete: false
-        };
-      }
-
-      // State B: Active Countdown between Midnight and 1:45 PM IST
       if (now < targetTimestamp) {
         const remaining = targetTimestamp - now;
         return {
           status: 'active',
           displayText: formatTimeRemaining(remaining),
-          prefixText: 'REVEALING IN',
+          prefixText: 'HALLOWEEN COUNTDOWN',
           statusLabel: 'LIVE COUNTDOWN',
           msRemaining: remaining,
           isActive: true,
@@ -1007,12 +982,12 @@
         };
       }
 
-      // State C: Reached Zero or Past 1:45 PM IST
+      // Reached Zero or Past 6:00 PM IST
       return {
         status: 'complete',
-        displayText: '00 : 00 : 00',
-        prefixText: 'THE REVEAL IS LIVE',
-        statusLabel: 'FESTIVAL REVEALED',
+        displayText: completionMsg,
+        prefixText: 'EVENT IS LIVE',
+        statusLabel: 'PARTY STARTED',
         msRemaining: 0,
         isActive: false,
         isComplete: true
@@ -1021,19 +996,6 @@
 
     function updateCountdown() {
       const state = computeState();
-
-      if (state.status === 'pre-reveal') {
-        if (timerEl) {
-          timerEl.textContent = state.displayText;
-          timerEl.classList.remove('is-active-timer', 'is-complete');
-        }
-        if (mainTextEl) mainTextEl.textContent = state.prefixText;
-        if (statusLabelEl) statusLabelEl.textContent = state.statusLabel;
-        if (statusTagEl) statusTagEl.classList.remove('is-live');
-        if (drawerTimerEl) drawerTimerEl.textContent = state.displayText;
-        if (drawerPrefixEl) drawerPrefixEl.textContent = state.prefixText;
-        return;
-      }
 
       if (state.status === 'active') {
         if (timerEl) {
@@ -1061,13 +1023,6 @@
         if (drawerTimerEl) drawerTimerEl.textContent = state.displayText;
         if (drawerPrefixEl) drawerPrefixEl.textContent = state.prefixText;
 
-        // Trigger one-time reveal completion transition
-        if (!hasTriggeredCompletion) {
-          hasTriggeredCompletion = true;
-          triggerRevealCompletion();
-        }
-
-        // Stop timer interval once target has passed
         if (timerInterval) {
           clearInterval(timerInterval);
           timerInterval = null;

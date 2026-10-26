@@ -14,6 +14,7 @@ for f in \
   js/share-ideas.js \
   js/qr-code.js \
   js/header.js \
+  js/countdown.js \
   api/submit-suggestion.js \
   assets/cultural-qr-code.jpg \
   assets/cultural-club-logo.jpg \
@@ -173,6 +174,7 @@ if [ -x /usr/bin/osascript ]; then
     }
 
     Function(read("js/header.js"));
+    Function(read("js/countdown.js"));
     var module = { exports: {} };
     eval(read("api/submit-suggestion.js"));
     if (typeof module.exports !== "function") {
@@ -180,6 +182,70 @@ if [ -x /usr/bin/osascript ]; then
     }
   ' >/dev/null
   echo "[PASS] 12. JavaScript client store and Node.js serverless syntax validated."
+fi
+
+# 13. Verify Live Halloween Event Countdown (Target: 30 October 2026, 6:00 PM IST)
+grep -q "\"2026-10-30T18:00:00+05:30\"" js/config.js
+grep -q "halloween-countdown-section" index.html
+grep -q "timer-days" index.html
+grep -q "timer-hours" index.html
+grep -q "timer-minutes" index.html
+grep -q "timer-seconds" index.html
+grep -q "halloween-countdown-timer" index.html
+grep -q "drawer-countdown-timer" index.html
+grep -q "THE PARTY STARTS NOW!" js/config.js
+grep -q "THE PARTY STARTS NOW!" js/countdown.js
+
+if [ -x /usr/bin/osascript ]; then
+  /usr/bin/osascript -l JavaScript -e '
+    ObjC.import("Foundation");
+    function read(p) {
+      return ObjC.unwrap($.NSString.stringWithContentsOfFileEncodingError(p, $.NSUTF8StringEncoding, null));
+    }
+
+    globalThis.window = globalThis;
+    globalThis.document = {
+      readyState: "complete",
+      addEventListener: function() {},
+      getElementById: function() { return null; }
+    };
+    globalThis.setInterval = function() {};
+    globalThis.clearInterval = function() {};
+
+    eval(read("js/config.js"));
+    eval(read("js/countdown.js"));
+
+    const countdown = window.APP_COUNTDOWN;
+    if (!countdown) throw new Error("window.APP_COUNTDOWN missing");
+    if (countdown.targetIso !== "2026-10-30T18:00:00+05:30") {
+      throw new Error("Target ISO mismatch: " + countdown.targetIso);
+    }
+
+    // 1. Current remaining time must be positive and formatted with 4 units
+    const current = countdown.calculateRemaining();
+    if (!/^[0-9]{2} DAYS : [0-9]{2} HOURS : [0-9]{2} MINUTES : [0-9]{2} SECONDS$/.test(current.formatted)) {
+      throw new Error("Countdown format test failed: " + current.formatted);
+    }
+
+    // 2. 1 second before target
+    const rem1s = countdown.calculateRemaining(countdown.targetTimestamp - 1000);
+    if (rem1s.formatted !== "00 DAYS : 00 HOURS : 00 MINUTES : 01 SECONDS" || rem1s.isComplete) {
+      throw new Error("1s before target test failed: " + rem1s.formatted);
+    }
+
+    // 3. At target zero: must display THE PARTY STARTS NOW!
+    const atTarget = countdown.calculateRemaining(countdown.targetTimestamp);
+    if (!atTarget.isComplete || atTarget.message !== "THE PARTY STARTS NOW!") {
+      throw new Error("At target zero test failed: " + JSON.stringify(atTarget));
+    }
+
+    // 4. Past target: must never display negative values
+    const pastTarget = countdown.calculateRemaining(countdown.targetTimestamp + 7200000);
+    if (!pastTarget.isComplete || pastTarget.diff !== 0 || pastTarget.message !== "THE PARTY STARTS NOW!") {
+      throw new Error("Past target negative protection failed");
+    }
+  ' >/dev/null
+  echo "[PASS] 13. Halloween countdown verified: Target 30 Oct 2026 6:00 PM IST, 4-unit dynamic formatting, zero-padding, timezone handling, and zero-stop message."
 fi
 
 echo "=== ALL SECURITY CHECKS AND ARCHITECTURE TESTS PASSED SUCCESSFULLY ==="

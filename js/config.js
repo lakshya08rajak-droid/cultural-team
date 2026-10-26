@@ -40,14 +40,15 @@ const CONFIG = {
     submissionCooldownSeconds: 5
   },
 
-  // Live Reveal Countdown Configuration
-  // Target: 15 October 2026, 1:45:00 PM IST (Asia/Kolkata, UTC+05:30)
-  // Activation: 15 October 2026, 12:00:00 AM IST (Midnight)
+  // Live Halloween Event Countdown Configuration
+  // Event: Freshers' Halloween Party
+  // Target: Friday, 30 October 2026, 6:00:00 PM IST (Asia/Kolkata, UTC+05:30)
   countdown: {
-    targetIso: "2026-10-15T13:45:00+05:30",
-    activationIso: "2026-10-15T00:00:00+05:30",
+    eventName: "Freshers' Halloween Party",
+    targetIso: "2026-10-30T18:00:00+05:30",
     timeZone: "Asia/Kolkata",
-    targetLabel: "15 October 2026, 1:45 PM IST"
+    targetLabel: "Friday, 30 October 2026, 6:00 PM IST",
+    completionMessage: "THE PARTY STARTS NOW!"
   }
 };
 

@@ -16,7 +16,7 @@
   />
 
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="css/styles.css?v=20261026-v3" />
+  <link rel="stylesheet" href="css/styles.css?v=20261026-v4" />
 </head>
 <body class="halloween-page">
 
@@ -78,6 +78,42 @@
   <!-- Full-Page Halloween Poster Stage with Smooth Natural Scrolling -->
   <main class="halloween-stage" id="halloween-stage" role="main">
     <div class="halloween-stage-inner">
+      <!-- Live Freshers' Halloween Party Countdown Component -->
+      <section class="halloween-countdown-section" id="halloween-countdown-section" aria-label="Freshers' Halloween Party Countdown">
+        <div class="countdown-badge">
+          <span class="countdown-flame-icon">🎃</span>
+          <span class="countdown-badge-text">Freshers' Halloween Party Countdown</span>
+        </div>
+
+        <div class="countdown-display" id="halloween-countdown-display" role="timer" aria-live="polite">
+          <div class="countdown-unit">
+            <span class="unit-val" id="timer-days">03</span>
+            <span class="unit-lbl">DAYS</span>
+          </div>
+          <span class="countdown-colon" aria-hidden="true">:</span>
+          <div class="countdown-unit">
+            <span class="unit-val" id="timer-hours">18</span>
+            <span class="unit-lbl">HOURS</span>
+          </div>
+          <span class="countdown-colon" aria-hidden="true">:</span>
+          <div class="countdown-unit">
+            <span class="unit-val" id="timer-minutes">00</span>
+            <span class="unit-lbl">MINUTES</span>
+          </div>
+          <span class="countdown-colon" aria-hidden="true">:</span>
+          <div class="countdown-unit">
+            <span class="unit-val" id="timer-seconds">00</span>
+            <span class="unit-lbl">SECONDS</span>
+          </div>
+        </div>
+
+        <!-- Full Formatted String Element for Direct Text Access -->
+        <div class="countdown-text-full" id="halloween-countdown-timer">
+          03 DAYS : 18 HOURS : 00 MINUTES : 00 SECONDS
+        </div>
+      </section>
+
+      <!-- Event Poster Display Card -->
       <div class="poster-display-card" role="region" aria-label="Fresher's Party Halloween Costume Theme Event Poster">
         <img
           src="assets/halloween-fresher-party-poster.jpg"
@@ -103,6 +139,14 @@
       <button type="button" class="drawer-close-btn" id="drawer-close-btn" aria-label="Close navigation menu">
         ✕
       </button>
+    </div>
+
+    <!-- Live Event Countdown Indicator in Drawer -->
+    <div class="drawer-countdown-box" id="drawer-countdown-box">
+      <span class="drawer-countdown-tag">🎃 PARTY COUNTDOWN</span>
+      <div class="drawer-countdown-text" id="drawer-countdown-timer">
+        03 DAYS : 18 HOURS : 00 MINUTES : 00 SECONDS
+      </div>
     </div>
 
     <nav class="drawer-nav" aria-label="Main Navigation Destinations">
@@ -139,7 +183,9 @@
     </div>
   </aside>
 
-  <!-- Header Scripts -->
-  <script src="js/header.js?v=20261026-v3"></script>
+  <!-- Application & Countdown Scripts -->
+  <script src="js/config.js?v=20261026-v4"></script>
+  <script src="js/countdown.js?v=20261026-v4"></script>
+  <script src="js/header.js?v=20261026-v4"></script>
 </body>
 </html>
