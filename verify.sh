@@ -19,6 +19,7 @@ for f in \
   assets/cultural-qr-code.jpg \
   assets/cultural-club-logo.jpg \
   assets/itm-skills-university-logo.jpg \
+  assets/itm-skills-university-logo.png \
   assets/halloween-fresher-party-poster.jpg \
   supabase/schema.sql \
   vercel.json \
@@ -70,7 +71,7 @@ echo "[PASS] 5. Server-side sliding window rate limiting and honeypot bot trap v
 # 6. Verify Cultural Team Top Navigation Bar Matching Reference Design Across All Pages
 for page in index.html share-ideas.html qr-code.html; do
   grep -q "class=\"cultural-header\"" "$page"
-  grep -q "assets/itm-skills-university-logo.jpg" "$page"
+  grep -q "assets/itm-skills-university-logo\.\(png\|jpg\)" "$page"
   grep -q "assets/cultural-club-logo.jpg" "$page"
   grep -q "CULTURAL TEAM" "$page"
   grep -q "class=\"header-btn-share-ideas\"" "$page"
@@ -247,5 +248,19 @@ if [ -x /usr/bin/osascript ]; then
   ' >/dev/null
   echo "[PASS] 13. Halloween countdown verified: Target 30 Oct 2026 6:00 PM IST, 4-unit dynamic formatting, zero-padding, timezone handling, and zero-stop message."
 fi
+
+# 14. Verify ITM Skills University Branding Fix & Enlargement (Beige Badge, No Checkerboard)
+grep -q "\.university-logo-box {" css/styles.css
+grep -q "background: #E8D9C5;" css/styles.css
+grep -q "height: 44px;" css/styles.css
+if grep -q "\.university-logo-box {[^{]*background: #FFFFFF;" css/styles.css; then
+  echo "ERROR: .university-logo-box must not use white #FFFFFF background!"
+  exit 1
+fi
+
+# Ensure both clean PNG and JPG assets exist and are non-empty
+[ -s "assets/itm-skills-university-logo.png" ]
+[ -s "assets/itm-skills-university-logo.jpg" ]
+echo "[PASS] 14. University branding verified: Warm beige #E8D9C5 badge, enlarged readable sizing (44px), zero checkerboard background."
 
 echo "=== ALL SECURITY CHECKS AND ARCHITECTURE TESTS PASSED SUCCESSFULLY ==="

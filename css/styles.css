@@ -121,24 +121,33 @@ body {
   gap: 0.5rem;
 }
 
-/* Light-coloured rectangular area with softly rounded corners for University Logo */
+/* Warm Beige / Sand Badge for ITM Skills University Logo (Seamlessly Integrated) */
 .university-logo-box {
-  background: #FFFFFF;
-  border-radius: 8px;
-  padding: 4px 10px;
+  background: #E8D9C5;
+  border-radius: 9999px;
+  padding: 5px 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(231, 216, 196, 0.45);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
   line-height: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.university-logo-box:hover {
+  background: #F2E5D3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
 .university-logo-img {
-  height: 32px;
+  height: 44px;
   width: auto;
-  max-width: 170px;
+  max-width: 230px;
   object-fit: contain;
   display: block;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.08));
 }
 
 /* Circular Cultural Team Crest & Uppercase Serif Typography */
@@ -255,9 +264,12 @@ body {
     padding: 0.75rem 1.15rem;
     gap: 0.75rem;
   }
+  .university-logo-box {
+    padding: 4px 12px;
+  }
   .university-logo-img {
-    height: 26px;
-    max-width: 140px;
+    height: 36px;
+    max-width: 190px;
   }
   .cultural-logo-circle {
     width: 38px;
@@ -290,11 +302,11 @@ body {
     gap: 0.35rem;
   }
   .university-logo-box {
-    padding: 3px 7px;
+    padding: 3px 10px;
   }
   .university-logo-img {
-    height: 22px;
-    max-width: 120px;
+    height: 28px;
+    max-width: 155px;
   }
   .cultural-logo-circle {
     width: 32px;
