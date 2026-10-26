@@ -89,98 +89,420 @@ body {
 }
 
 /* ==============================================================================
-   TOP NAVIGATION HEADER
+   CULTURAL TEAM OFFICIAL TOP NAVIGATION HEADER (MATCHING REFERENCE DESIGN)
    ============================================================================== */
-.site-header {
+.cultural-header {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 990;
   width: 100%;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1.5px solid var(--border-subtle);
-  box-shadow: 0 2px 12px rgba(35, 21, 24, 0.03);
+  background: #24080E;
+  border-bottom: 1px solid rgba(231, 216, 196, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
 }
 
-.header-inner {
-  max-width: 1100px;
+.header-content-wrap {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0.85rem 1.5rem;
+  padding: 0.85rem 1.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
-.header-brand {
+/* Left Stack: University Logo Box on Top, Cultural Team Logo & Typography Below */
+.header-left-stack {
   display: flex;
   flex-direction: column;
-  gap: 0.18rem;
-  text-decoration: none;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
 
-.brand-university-tag {
+/* Light-coloured rectangular area with softly rounded corners for University Logo */
+.university-logo-box {
+  background: #FFFFFF;
+  border-radius: 8px;
+  padding: 4px 10px;
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--maroon-primary);
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  line-height: 0;
 }
 
-.brand-university-tag img {
-  height: 20px;
+.university-logo-img {
+  height: 32px;
   width: auto;
+  max-width: 170px;
   object-fit: contain;
   display: block;
 }
 
-.brand-title {
+/* Circular Cultural Team Crest & Uppercase Serif Typography */
+.cultural-team-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.cultural-team-brand:hover {
+  opacity: 0.92;
+}
+
+.cultural-logo-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.8px solid rgba(231, 216, 196, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+  background: #1A050A;
+}
+
+.cultural-team-text {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  color: #FFFDF9;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Right Side: Actions (Share Ideas Button & Hamburger Menu) */
+.header-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+/* Large Rounded Beige "Share Ideas" Button with Dark Maroon Text */
+.header-btn-share-ideas {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.72rem 1.65rem;
+  border-radius: 9999px;
+  background: #E8D9C5;
+  color: #4A101A !important;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.header-btn-share-ideas:hover {
+  background: #F2E5D3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  color: #380C14 !important;
+}
+
+/* Large Rounded Hamburger Menu Button with Three Horizontal Lines */
+.header-btn-hamburger {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4.5px;
+  width: 50px;
+  height: 44px;
+  border-radius: 20px;
+  background: rgba(48, 11, 18, 0.85);
+  border: 1.5px solid rgba(231, 216, 196, 0.3);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.header-btn-hamburger:hover {
+  background: rgba(68, 16, 26, 0.95);
+  border-color: rgba(231, 216, 196, 0.6);
+  transform: translateY(-1px);
+}
+
+.header-btn-hamburger:focus-visible {
+  outline: 2px solid #E8D9C5;
+  outline-offset: 2px;
+}
+
+.hamburger-bar {
+  display: block;
+  width: 22px;
+  height: 2.5px;
+  background: #FFFDF9;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+/* Responsive Header Tuning */
+@media (max-width: 768px) {
+  .header-content-wrap {
+    padding: 0.75rem 1.15rem;
+    gap: 0.75rem;
+  }
+  .university-logo-img {
+    height: 26px;
+    max-width: 140px;
+  }
+  .cultural-logo-circle {
+    width: 38px;
+    height: 38px;
+  }
+  .cultural-team-text {
+    font-size: 1.15rem;
+    letter-spacing: 0.06em;
+  }
+  .header-btn-share-ideas {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.94rem;
+  }
+  .header-btn-hamburger {
+    width: 44px;
+    height: 40px;
+    border-radius: 16px;
+  }
+  .hamburger-bar {
+    width: 19px;
+    height: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content-wrap {
+    padding: 0.65rem 0.85rem;
+  }
+  .header-left-stack {
+    gap: 0.35rem;
+  }
+  .university-logo-box {
+    padding: 3px 7px;
+  }
+  .university-logo-img {
+    height: 22px;
+    max-width: 120px;
+  }
+  .cultural-logo-circle {
+    width: 32px;
+    height: 32px;
+  }
+  .cultural-team-text {
+    font-size: 1.02rem;
+    letter-spacing: 0.04em;
+  }
+  .header-right-actions {
+    gap: 0.5rem;
+  }
+  .header-btn-share-ideas {
+    padding: 0.5rem 0.95rem;
+    font-size: 0.85rem;
+  }
+  .header-btn-hamburger {
+    width: 40px;
+    height: 36px;
+    border-radius: 14px;
+  }
+  .hamburger-bar {
+    width: 17px;
+    height: 2px;
+    gap: 3.5px;
+  }
+}
+
+/* ==============================================================================
+   NAVIGATION DRAWER (FUNCTIONAL HAMBURGER MENU)
+   ============================================================================== */
+.nav-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(18, 4, 7, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.nav-drawer-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nav-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(340px, 86vw);
+  background: #24080E;
+  border-left: 1.5px solid rgba(231, 216, 196, 0.25);
+  box-shadow: -10px 0 35px rgba(0, 0, 0, 0.6);
+  z-index: 1001;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+.nav-drawer.is-open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(231, 216, 196, 0.15);
+}
+
+.drawer-brand-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.drawer-tagline {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #B38038;
+}
+
+.drawer-title {
   font-family: var(--font-heading);
   font-size: 1.15rem;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: var(--text-primary);
-  line-height: 1.2;
+  color: #FFFDF9;
 }
 
-.header-actions {
+.drawer-close-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(231, 216, 196, 0.25);
+  color: #FFFDF9;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.nav-pill-link {
-  display: inline-flex;
+.drawer-close-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: #E8D9C5;
+  color: #E8D9C5;
+  transform: rotate(90deg);
+}
+
+.drawer-nav {
+  flex: 1;
+  margin: 1.5rem 0;
+}
+
+.drawer-nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.drawer-nav-item {
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1.1rem;
-  border-radius: var(--radius-full);
-  background: var(--bg-chip);
-  border: 1px solid var(--border-subtle);
-  color: var(--maroon-primary);
-  font-size: 0.84rem;
+  gap: 0.85rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(231, 216, 196, 0.12);
+  color: #FFFDF9;
+  text-decoration: none;
+  font-family: var(--font-heading);
+  font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.04em;
+  transition: all 0.2s ease;
+}
+
+.drawer-nav-item:hover,
+.drawer-nav-item.is-active {
+  background: rgba(232, 217, 197, 0.15);
+  border-color: #E8D9C5;
+  color: #E8D9C5;
+  transform: translateX(4px);
+}
+
+.drawer-item-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.drawer-item-label {
+  flex: 1;
+}
+
+.drawer-item-arrow {
+  color: rgba(231, 216, 196, 0.4);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.drawer-nav-item:hover .drawer-item-arrow {
+  color: #E8D9C5;
+}
+
+.drawer-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(231, 216, 196, 0.15);
+  text-align: center;
+}
+
+.drawer-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.25rem;
+  border-radius: 9999px;
+  background: #E8D9C5;
+  color: #4A101A !important;
+  font-weight: 700;
+  font-size: 0.95rem;
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
-.nav-pill-link:hover {
-  background: var(--maroon-primary);
-  color: var(--text-on-maroon);
-  border-color: var(--maroon-primary);
+.drawer-cta-btn:hover {
+  background: #F2E5D3;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--maroon-glow);
 }
 
-.nav-pill-link svg {
-  width: 15px;
-  height: 15px;
-  flex-shrink: 0;
+.drawer-subtext {
+  font-size: 0.78rem;
+  color: rgba(231, 216, 196, 0.6);
+  letter-spacing: 0.04em;
 }
 
 /* ==============================================================================

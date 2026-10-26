@@ -16,32 +16,111 @@
   />
 
   <!-- Main Maroon & Beige Stylesheet -->
-  <link rel="stylesheet" href="css/styles.css?v=20261026-v1" />
+  <link rel="stylesheet" href="css/styles.css?v=20261026-v2" />
 </head>
 <body>
 
-  <!-- Top Sticky Header -->
-  <header class="site-header">
-    <div class="header-inner">
-      <div class="header-brand">
-        <span class="brand-university-tag">
-          <img src="assets/itm-skills-university-logo.jpg" alt="ITM Skills University" height="20" />
-          <span>ITM Skills University</span>
-        </span>
-        <span class="brand-title">CULTURAL TEAM</span>
+  <!-- Top Navigation Header Matching Reference Design -->
+  <header class="cultural-header" id="cultural-header">
+    <div class="header-content-wrap">
+      <!-- Left: Stacked Branding -->
+      <div class="header-left-stack">
+        <!-- University Logo in Light-Coloured Rounded Container -->
+        <div class="university-logo-box" aria-label="ITM Skills University">
+          <img
+            src="assets/itm-skills-university-logo.jpg"
+            alt="ITM Skills University"
+            class="university-logo-img"
+            width="827"
+            height="246"
+            loading="eager"
+          />
+        </div>
+
+        <!-- Cultural Team Circular Logo & Typography -->
+        <a href="/" class="cultural-team-brand" aria-label="Cultural Team Home">
+          <img
+            src="assets/cultural-club-logo.jpg"
+            alt="Cultural Team Crest"
+            class="cultural-logo-circle"
+            width="1024"
+            height="978"
+            loading="eager"
+          />
+          <span class="cultural-team-text">CULTURAL TEAM</span>
+        </a>
       </div>
 
-      <nav class="header-actions" aria-label="Page Navigation">
-        <a href="/share-ideas" class="nav-pill-link" aria-label="Go to Share Ideas Page">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          <span>Share Ideas</span>
+      <!-- Right: Actions (Share Ideas Button & Hamburger Menu) -->
+      <div class="header-right-actions">
+        <!-- Pill-Shaped Beige "Share Ideas" Button -->
+        <a href="/share-ideas" class="header-btn-share-ideas" aria-label="Go to Share Ideas page">
+          Share Ideas
         </a>
-      </nav>
+
+        <!-- Rounded Maroon Hamburger Button with 3 Horizontal Lines -->
+        <button
+          type="button"
+          class="header-btn-hamburger"
+          id="header-hamburger-toggle"
+          aria-label="Open navigation menu"
+          aria-expanded="false"
+          aria-controls="nav-drawer"
+        >
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+      </div>
     </div>
   </header>
+
+  <!-- Functional Navigation Drawer Modal / Backdrop -->
+  <div class="nav-drawer-backdrop" id="nav-drawer-backdrop" aria-hidden="true"></div>
+  <aside class="nav-drawer" id="nav-drawer" role="dialog" aria-modal="true" aria-label="Website Navigation Menu" inert>
+    <div class="drawer-header">
+      <div class="drawer-brand-group">
+        <span class="drawer-tagline">ITM SKILLS UNIVERSITY</span>
+        <span class="drawer-title">CULTURAL TEAM</span>
+      </div>
+      <button type="button" class="drawer-close-btn" id="drawer-close-btn" aria-label="Close navigation menu">
+        ✕
+      </button>
+    </div>
+
+    <nav class="drawer-nav" aria-label="Main Navigation Destinations">
+      <ul class="drawer-nav-list">
+        <li>
+          <a href="/" class="drawer-nav-item">
+            <span class="drawer-item-icon">🏛️</span>
+            <span class="drawer-item-label">Home</span>
+            <span class="drawer-item-arrow">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="/share-ideas" class="drawer-nav-item">
+            <span class="drawer-item-icon">✨</span>
+            <span class="drawer-item-label">Share Ideas</span>
+            <span class="drawer-item-arrow">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="/qr-code" class="drawer-nav-item is-active">
+            <span class="drawer-item-icon">📱</span>
+            <span class="drawer-item-label">QR Code</span>
+            <span class="drawer-item-arrow">›</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="drawer-footer">
+      <a href="/share-ideas" class="drawer-cta-btn">
+        Submit Your Event Suggestion
+      </a>
+      <p class="drawer-subtext">College Arts &amp; Cultural Committee</p>
+    </div>
+  </aside>
 
   <!-- Main Content Layout -->
   <main class="page-wrapper qr-page-wrapper">
@@ -116,7 +195,8 @@
   </div>
 
   <!-- Application Scripts -->
-  <script src="js/config.js?v=20261026-v1"></script>
-  <script src="js/qr-code.js?v=20261026-v1"></script>
+  <script src="js/config.js?v=20261026-v2"></script>
+  <script src="js/qr-code.js?v=20261026-v2"></script>
+  <script src="js/header.js?v=20261026-v2"></script>
 </body>
 </html>

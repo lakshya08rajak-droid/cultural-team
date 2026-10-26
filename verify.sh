@@ -13,8 +13,11 @@ for f in \
   js/storage.js \
   js/share-ideas.js \
   js/qr-code.js \
+  js/header.js \
   api/submit-suggestion.js \
   assets/cultural-qr-code.jpg \
+  assets/cultural-club-logo.jpg \
+  assets/itm-skills-university-logo.jpg \
   supabase/schema.sql \
   vercel.json \
   package.json \
@@ -62,17 +65,25 @@ grep -q "website_bot_check" api/submit-suggestion.js
 grep -q "website-bot-check" share-ideas.html
 echo "[PASS] 5. Server-side sliding window rate limiting and honeypot bot trap verified."
 
-# 6. Verify Home Page is Completely Blank and Pure White (#FFFFFF)
+# 6. Verify Cultural Team Top Navigation Bar Matching Reference Design Across All Pages
+for page in index.html share-ideas.html qr-code.html; do
+  grep -q "class=\"cultural-header\"" "$page"
+  grep -q "assets/itm-skills-university-logo.jpg" "$page"
+  grep -q "assets/cultural-club-logo.jpg" "$page"
+  grep -q "CULTURAL TEAM" "$page"
+  grep -q "class=\"header-btn-share-ideas\"" "$page"
+  grep -q "id=\"header-hamburger-toggle\"" "$page"
+  grep -q "class=\"nav-drawer\"" "$page"
+  grep -q "js/header.js" "$page"
+done
+# Ensure index.html body retains #ffffff blank backdrop below header
 grep -qi "#ffffff" index.html
-if grep -qi "<header\|<nav\|<footer\|<img\|<button\|<section\|<h1\|<h2\|<h3\|<p" index.html; then
-  echo "ERROR: Home page (index.html) must not contain visible elements (header/nav/footer/img/button/section/headings/p)!"
-  exit 1
-fi
+# Ensure no remnants of removed sections on index.html
 if grep -qi "mandala\|mystery\|community\|organiser\|30 ideas" index.html; then
   echo "ERROR: Home page contains remnants of removed sections!"
   exit 1
 fi
-echo "[PASS] 6. Home page verified: Completely blank, pure white (#FFFFFF), zero visible elements or remnants."
+echo "[PASS] 6. Top navigation bar verified across all pages: University branding, Cultural crest, serif typography, Share Ideas pill, hamburger drawer, and clean white body."
 
 # 7. Verify Removed Sections are Completely Removed from Active Interface
 for page in index.html share-ideas.html qr-code.html; do
@@ -151,6 +162,7 @@ if [ -x /usr/bin/osascript ]; then
       throw new Error("SuggestionStore.add missing");
     }
 
+    Function(read("js/header.js"));
     var module = { exports: {} };
     eval(read("api/submit-suggestion.js"));
     if (typeof module.exports !== "function") {
