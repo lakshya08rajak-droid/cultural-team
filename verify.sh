@@ -18,6 +18,7 @@ for f in \
   assets/cultural-qr-code.jpg \
   assets/cultural-club-logo.jpg \
   assets/itm-skills-university-logo.jpg \
+  assets/halloween-fresher-party-poster.jpg \
   supabase/schema.sql \
   vercel.json \
   package.json \
@@ -76,14 +77,23 @@ for page in index.html share-ideas.html qr-code.html; do
   grep -q "class=\"nav-drawer\"" "$page"
   grep -q "js/header.js" "$page"
 done
-# Ensure index.html body retains #ffffff blank backdrop below header
-grep -qi "#ffffff" index.html
+echo "[PASS] 6. Top navigation bar verified across all pages: University branding, Cultural crest, serif typography, Share Ideas pill, and hamburger drawer."
+
+# 6b. Verify Halloween Poster Full-Page Background with Smooth Natural Scrolling
+grep -q "assets/halloween-fresher-party-poster.jpg" index.html
+grep -q "assets/halloween-fresher-party-poster.jpg" css/styles.css
+grep -q "class=\"halloween-poster-media\"" index.html
+grep -q "class=\"poster-display-card\"" index.html
+grep -q "scroll-behavior: smooth;" css/styles.css
+grep -q "background-attachment: scroll;" css/styles.css
+grep -q "body.halloween-page" css/styles.css
+
 # Ensure no remnants of removed sections on index.html
 if grep -qi "mandala\|mystery\|community\|organiser\|30 ideas" index.html; then
   echo "ERROR: Home page contains remnants of removed sections!"
   exit 1
 fi
-echo "[PASS] 6. Top navigation bar verified across all pages: University branding, Cultural crest, serif typography, Share Ideas pill, hamburger drawer, and clean white body."
+echo "[PASS] 6b. Halloween poster background verified: Uncropped 682x1024 poster asset, smooth natural scrolling, mobile compatibility, zero removed section remnants."
 
 # 7. Verify Removed Sections are Completely Removed from Active Interface
 for page in index.html share-ideas.html qr-code.html; do

@@ -96,7 +96,9 @@ body {
   top: 0;
   z-index: 990;
   width: 100%;
-  background: #24080E;
+  background: rgba(36, 8, 14, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(231, 216, 196, 0.2);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
 }
@@ -503,6 +505,102 @@ body {
   font-size: 0.78rem;
   color: rgba(231, 216, 196, 0.6);
   letter-spacing: 0.04em;
+}
+
+/* ==============================================================================
+   HALLOWEEN POSTER FULL-PAGE STAGE & BACKGROUND (CINEMATIC SMOOTH SCROLLING)
+   ============================================================================== */
+body.halloween-page {
+  background-color: #070204;
+  background-image: 
+    radial-gradient(ellipse at 50% 20%, rgba(68, 16, 26, 0.45) 0%, rgba(7, 2, 4, 0.98) 70%, #070204 100%),
+    url('../assets/halloween-fresher-party-poster.jpg');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: scroll;
+  color: #FFFDF9;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.halloween-stage {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 76px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1.5rem 1rem 3.5rem;
+  background-color: transparent;
+  box-sizing: border-box;
+}
+
+.halloween-stage-inner {
+  width: 100%;
+  max-width: 682px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.poster-display-card {
+  width: 100%;
+  max-width: 682px;
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 
+    0 16px 50px rgba(0, 0, 0, 0.95),
+    0 0 90px rgba(78, 16, 26, 0.4),
+    0 0 0 1px rgba(231, 216, 196, 0.12);
+  background-color: #070204;
+  background-image: url('../assets/halloween-fresher-party-poster.jpg');
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-attachment: scroll;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.halloween-poster-media {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 682 / 1024;
+  object-fit: contain;
+  border-radius: inherit;
+}
+
+@media (max-width: 768px) {
+  .halloween-stage {
+    padding: 1rem 0.75rem 2.5rem;
+    min-height: calc(100vh - 66px);
+  }
+  .poster-display-card {
+    border-radius: 10px;
+    box-shadow: 
+      0 10px 32px rgba(0, 0, 0, 0.9),
+      0 0 50px rgba(78, 16, 26, 0.3),
+      0 0 0 1px rgba(231, 216, 196, 0.1);
+  }
+}
+
+@media (max-width: 480px) {
+  .halloween-stage {
+    padding: 0.65rem 0.5rem 2rem;
+    min-height: calc(100vh - 60px);
+  }
+  .poster-display-card {
+    border-radius: 8px;
+  }
 }
 
 /* ==============================================================================
