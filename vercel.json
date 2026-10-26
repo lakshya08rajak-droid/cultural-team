@@ -2,6 +2,12 @@
   "version": 2,
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/share-ideas", "destination": "/share-ideas.html" },
+    { "source": "/share-ideas/", "destination": "/share-ideas.html" },
+    { "source": "/qr-code", "destination": "/qr-code.html" },
+    { "source": "/qr-code/", "destination": "/qr-code.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",

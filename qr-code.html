@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Code — Cultural Team</title>
+  <meta name="description" content="Scan the QR code to open the Cultural Team website and share your event suggestions." />
+  <meta name="theme-color" content="#7D2633" />
+
+  <!-- Preconnect & Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Main Maroon & Beige Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css?v=20261026-v1" />
+</head>
+<body>
+
+  <!-- Top Sticky Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <span class="brand-university-tag">
+          <img src="assets/itm-skills-university-logo.jpg" alt="ITM Skills University" height="20" />
+          <span>ITM Skills University</span>
+        </span>
+        <span class="brand-title">CULTURAL TEAM</span>
+      </div>
+
+      <nav class="header-actions" aria-label="Page Navigation">
+        <a href="/share-ideas" class="nav-pill-link" aria-label="Go to Share Ideas Page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Share Ideas</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="page-wrapper qr-page-wrapper">
+    <!-- QR Card Container -->
+    <div class="main-card qr-card-container">
+      <span class="intro-badge">📱 Mobile Access</span>
+
+      <h1 class="intro-title" style="font-size: clamp(1.5rem, 3.5vw, 2rem); margin-bottom: 0.65rem;">
+        Scan to Share Your Suggestions
+      </h1>
+
+      <p class="intro-subtext" style="font-size: 0.95rem; margin-bottom: 1.25rem;">
+        Scan this QR code with your phone camera to open the Cultural Team website and share your suggestions.
+      </p>
+
+      <!-- Centered QR Display Frame with Ample White Space -->
+      <div class="qr-frame-box" aria-label="QR Code to open Cultural Team website">
+        <div class="qr-image-wrapper">
+          <img
+            src="assets/cultural-qr-code.jpg"
+            alt="QR Code — Scan to Share Your Suggestions"
+            class="qr-image"
+            width="918"
+            height="918"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      </div>
+
+      <!-- Destination URL Pill -->
+      <div>
+        <div id="qr-url-display" class="qr-url-pill">
+          https://cultural-team-git-main-culturalteam.vercel.app
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="qr-action-buttons">
+        <button type="button" id="copy-link-btn" class="btn-qr-action btn-qr-secondary" aria-label="Copy public website link to clipboard">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>Copy Public Link</span>
+        </button>
+
+        <button type="button" id="print-flyer-btn" class="btn-qr-action btn-qr-secondary" aria-label="Print high-resolution flyer poster">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          <span>Print Flyer Poster</span>
+        </button>
+
+        <a href="/share-ideas" class="btn-qr-action btn-qr-primary" aria-label="Submit an idea online directly">
+          <span>Submit Ideas Online</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Floating Toast Notification -->
+  <div id="toast-notice" class="toast-notice" role="status" aria-live="polite">
+    <span id="toast-icon">✓</span>
+    <span id="toast-text">Action completed successfully</span>
+  </div>
+
+  <!-- Application Scripts -->
+  <script src="js/config.js?v=20261026-v1"></script>
+  <script src="js/qr-code.js?v=20261026-v1"></script>
+</body>
+</html>
