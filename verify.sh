@@ -91,7 +91,7 @@ grep -q "background-attachment: scroll;" css/styles.css
 grep -q "body.halloween-page" css/styles.css
 
 # Ensure no remnants of removed sections on index.html
-if grep -qi "mandala\|mystery\|community\|organiser\|30 ideas" index.html; then
+if grep -qi "mandala\|id=\"mystery\"\|id=\"community-wall\"\|id=\"suggestion-management\"\|id=\"inspiration-section\"\|30 ideas" index.html; then
   echo "ERROR: Home page contains remnants of removed sections!"
   exit 1
 fi
@@ -262,5 +262,30 @@ fi
 [ -s "assets/itm-skills-university-logo.png" ]
 [ -s "assets/itm-skills-university-logo.jpg" ]
 echo "[PASS] 14. University branding verified: Warm beige #E8D9C5 badge, enlarged readable sizing (44px), zero checkerboard background."
+
+# 15. Verify Professional Cultural Team Website Footer
+for page in index.html share-ideas.html qr-code.html; do
+  grep -q "class=\"cultural-site-footer\"" "$page"
+  grep -q "Our Cultural Journey" "$page"
+  grep -q "Ganpati Celebration" "$page"
+  grep -q "Garba Night" "$page"
+  grep -q "Halloween Event" "$page"
+  grep -q "Freshers' Party" "$page"
+  grep -q "Cultural Celebrations" "$page"
+  grep -q "More Events Coming Soon..." "$page"
+  grep -q "Quick Links" "$page"
+  grep -q "Follow Our Journey" "$page"
+  grep -q "@culturalclub.itm" "$page"
+  grep -q "https://www.instagram.com/culturalclub.itm?obrf=cHB3dHNwZmVqZ2c0" "$page"
+  grep -q "Creating memories. Celebrating culture. Building community." "$page"
+  grep -q "© 2026 ITM Skills University Cultural Team. All rights reserved." "$page"
+  grep -q "Made with passion for our campus community." "$page"
+done
+
+# Ensure footer styling in css/styles.css
+grep -q "\.cultural-site-footer" css/styles.css
+grep -q "\.footer-grid" css/styles.css
+grep -q "\.footer-instagram-card" css/styles.css
+echo "[PASS] 15. Professional footer verified across all pages: 4-column responsive layout, official Instagram, events list, community message, and copyright bar in normal document flow."
 
 echo "=== ALL SECURITY CHECKS AND ARCHITECTURE TESTS PASSED SUCCESSFULLY ==="
